@@ -81,6 +81,12 @@ menuconfig DEVEL
 		  git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux-2.6.git
 		  This will create a git clone of the kernel in your build directory.
 
+	config KERNEL_GIT_DEPTH
+		string "Enter git repository to clone depth" if DEVEL
+		default ""
+		help
+		  Avoid cloning the full kernel and only grab the top N commits.
+
 	config KERNEL_GIT_LOCAL_REPOSITORY
 		string "Enter path to local reference repository" if DEVEL
 		depends on (KERNEL_GIT_CLONE_URI != "")
