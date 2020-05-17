@@ -32,7 +32,7 @@ define Package/libiwinfo
   SECTION:=libs
   CATEGORY:=Libraries
   TITLE:=Generalized Wireless Information Library (iwinfo)
-  DEPENDS:=+PACKAGE_kmod-cfg80211:libnl-tiny +libuci +libubus
+  DEPENDS:=+(PACKAGE_kmod-cfg80211||TARGET_intel_mips):libnl-tiny +libuci +libubus
   ABI_VERSION:=20181126
 endef
 
@@ -75,7 +75,8 @@ IWINFO_BACKENDS := \
 	$(if $(CONFIG_PACKAGE_kmod-brcm-wl),wl) \
 	$(if $(CONFIG_PACKAGE_kmod-brcm-wl-mini),wl) \
 	$(if $(CONFIG_PACKAGE_kmod-brcm-wl-mimo),wl) \
-	$(if $(CONFIG_PACKAGE_kmod-cfg80211),nl80211)
+	$(if $(CONFIG_PACKAGE_kmod-cfg80211),nl80211) \
+	$(if $(CONFIG_TARGET_intel_mips),nl80211)
 
 TARGET_CFLAGS += \
 	-I$(STAGING_DIR)/usr/include/libnl-tiny \
