@@ -102,9 +102,16 @@ feeds = []
 for p in profile.get("feeds", []):
     try:
         f = profile["feeds"].get(p)
-        feeds.append(
-            f'{f.get("method", "src-git")},{f["name"]},{f["uri"]};{f.get("branch", "master")}'
-        )
+        if all(k in f for k in ("branch", "hash")):
+            die(f"Please specify either a branch or a hash, not both: {f}")
+        if "hash" in f:
+            feeds.append(
+                f'{f.get("method", "src-git")},{f["name"]},{f["uri"]}^{f.get("hash")}'
+            )
+        else:
+            feeds.append(
+                f'{f.get("method", "src-git")},{f["name"]},{f["uri"]};{f.get("branch", "master")}'
+            )
     except:
         print(f"Badly configured feed: {f}")
 
