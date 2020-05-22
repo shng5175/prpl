@@ -4,8 +4,8 @@ import yaml
 from pathlib import Path
 from shutil import rmtree
 import sys
-from subprocess import run
-from os import getenv
+from subprocess import run, DEVNULL
+from os import getenv, listdir, path
 
 profile_folder = Path(getenv("PROFILES", "./profiles"))
 
@@ -34,6 +34,7 @@ def usage(code: int = 0):
     )
     quit(code)
 
+
 def load_yaml(fname: str, profile: dict):
     profile_file = (profile_folder / fname).with_suffix(".yml")
 
@@ -45,7 +46,7 @@ def load_yaml(fname: str, profile: dict):
         if n in {"profile", "target", "subtarget", "external_target"}:
             if profile.get(n):
                 die(f"Duplicate tag found {n}")
-            profile.update({n:new.get(n)})
+            profile.update({n: new.get(n)})
         elif n in {"description"}:
             profile["description"].append(new.get(n))
         elif n in {"packages"}:
@@ -55,9 +56,10 @@ def load_yaml(fname: str, profile: dict):
         elif n in {"feeds"}:
             for f in new.get(n):
                 if f.get("name", "") == "" or f.get("uri", "") == "":
-                     die(f"Found bad feed {f}")
+                    die(f"Found bad feed {f}")
                 profile["feeds"][f.get("name")] = f
     return profile
+
 
 if "list" in sys.argv:
     print(f"Profiles in {profile_folder}")
@@ -84,7 +86,7 @@ if "clean" in sys.argv:
     print("Tree is now clean")
     quit(0)
 
-profile = {"packages":[], "description": [],"diffconfig":"", "feeds":{}}
+profile = {"packages": [], "description": [], "diffconfig": "", "feeds": {}}
 
 for p in sys.argv[1:]:
     profile = load_yaml(p, profile)
@@ -123,7 +125,12 @@ if run(["./scripts/feeds", "update"]).returncode:
 
 for p in profile.get("feeds", []):
     f = profile["feeds"].get(p)
-    if run(["./scripts/feeds", "install", "-a", "-f", "-p", f.get("name")]).returncode:
+    packages = [p for p in listdir(
+        f"feeds/{f['name']}") if not p.startswith('.')]
+
+    for package in packages:
+        run(["./scripts/feeds", "uninstall", package])
+    if run(["./scripts/feeds", "install", "-a", "-f", "-p", f.get("name")], stdout=DEVNULL, stderr=DEVNULL).returncode:
         die(f"Error installing {feed}")
 
 if profile.get("external_target", False):
