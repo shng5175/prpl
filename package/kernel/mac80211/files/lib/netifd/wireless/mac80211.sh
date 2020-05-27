@@ -454,7 +454,7 @@ mac80211_iw_interface_add() {
 mac80211_prepare_vif() {
 	json_select config
 
-	json_get_vars ifname mode ssid wds powersave macaddr
+	json_get_vars ifname mode ssid wds powersave macaddr wpa_psk_file vlan_file
 
 	[ -n "$ifname" ] || ifname="wlan${phy#phy}${if_idx:+-$if_idx}"
 	if_idx=$((${if_idx:-0} + 1))
@@ -472,6 +472,12 @@ mac80211_prepare_vif() {
 	json_add_object data
 	json_add_string ifname "$ifname"
 	json_close_object
+
+	[ "$mode" == "ap" ] && {
+		[ -z "$wpa_psk_file" ] && hostapd_set_psk "$ifname"
+		[ -z "$vlan_file" ] && hostapd_set_vlan "$ifname"
+	}
+
 	json_select config
 
 	# It is far easier to delete and create the desired interface
