@@ -144,6 +144,7 @@ for package in profile.get("packages", []):
 Path(".config").write_text(config_output)
 print("Configuration written to .config")
 
+rmtree("./tmp", ignore_errors=True)
 print("Running make defconfig")
 if run(["make", "defconfig"]).returncode:
     die(f"Error running make defconfig")
