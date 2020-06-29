@@ -103,6 +103,7 @@ packages:
   - swpal_6x-uci
   - terminfo
   - uuidgen
+  - tcpdump
 
 diffconfig: |
   CONFIG_DEVEL=y
