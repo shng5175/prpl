@@ -21,13 +21,13 @@ feeds:
     uri: https://intel.prpl.dev/intel/feed_switch_api.git
     branch: ugw-8.4.1-cleanup
   - name: feed_wlan_6x
-    uri: https://intel.prpl.dev/intel/feed_wlan_6x.git
+    uri: https://intel.prpl.dev/prplmesh/feed_wlan_6x.git
     branch: ugw-8.4.1-cleanup
   - name: feed_prpl
-    uri: https://git.prpl.dev/prplwrt/feed-prpl.git
+    uri: https://git.prpl.dev/prplmesh/feed-prpl.git
     branch: prpl-19.07
   - name: feed_opensource_apps
-    uri: https://intel.prpl.dev/intel/feed_opensource_apps.git
+    uri: https://intel.prpl.dev/prplmesh/feed_opensource_apps.git
     branch: ugw-8.4.1-cleanup
   - name: feed_pending
     uri: https://intel.prpl.dev/intel/feed-pending.git
