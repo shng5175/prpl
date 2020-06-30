@@ -1,19 +1,37 @@
 ---
 profiles:
-  - AX6000_2000_ETH_11AXUCI
+  - NETGEAR_RAX40
 target: intel_mips
 subtarget: xrx500
 external_target: True
-description: Build images for the Intel MIPS AxePoint device
+description: Build images for the Intel MIPS Netgear RAX40 device
 feeds:
-  - name: feed_intel
-    uri: https://gitlab.com/prpl-foundation/prplwrt/feed-intel.git
-    tracking_branch: ugw-8.4.2-cleanup
-    revision: 3cde61c2695d19140fee99db5816fa892ef722f4
+  - name: feed_target_mips
+    uri: https://intel.prpl.dev/intel/feed_target_mips.git
+    branch: ugw-8.4.1-cleanup
+  - name: feed_datapath
+    uri: https://intel.prpl.dev/intel/feed_datapath.git
+    branch: ugw-8.4.1-cleanup
+  - name: feed_ppa
+    uri: https://intel.prpl.dev/intel/feed_ppa.git
+    branch: ugw-8.4.1-cleanup
+  - name: feed_gphy_firmware
+    uri: https://intel.prpl.dev/intel/feed_gphy_firmware.git
+    branch: ugw-8.4.1-cleanup
+  - name: feed_switch_api
+    uri: https://intel.prpl.dev/intel/feed_switch_api.git
+    branch: ugw-8.4.1-cleanup
+  - name: feed_wlan_6x
+    uri: https://intel.prpl.dev/prplmesh/feed_wlan_6x.git
+    branch: ugw-8.4.1-cleanup
   - name: feed_prpl
-    uri: https://gitlab.com/prpl-foundation/prplwrt/feed-prpl.git
-    tracking_branch: prpl-19.07
-    revision: 63dcf92dbaab544e98a17879b56262b2f3009751
+    uri: https://git.prpl.dev/prplmesh/feed-prpl.git
+    branch: prpl-19.07
+  - name: feed_opensource_apps
+    uri: https://intel.prpl.dev/prplmesh/feed_opensource_apps.git
+    branch: ugw-8.4.1-cleanup
+  - name: feed_pending
+    uri: https://intel.prpl.dev/intel/feed-pending.git
 
 packages:
   - dwpal_6x-uci
@@ -80,18 +98,19 @@ packages:
   - ltq-wlan-wave_6x-uci
   - nand-utils
   - ppacmd
+  - safeclibs
   - safeclibs3
   - switch_cli_ugw8
   - swpal_6x-uci
   - terminfo
   - uuidgen
+  - tcpdump
 
 diffconfig: |
-  CONFIG_BUILD_LOG=y
   CONFIG_DEVEL=y
-  CONFIG_KERNEL_GIT_CLONE_URI="https://gitlab.com/prpl-foundation/intel/linux.git"
-  CONFIG_KERNEL_GIT_DEPTH=""
-  CONFIG_KERNEL_GIT_REF="6739058ba9404ab82b6e06b5bff9f89cc9df3656"
+  CONFIG_KERNEL_GIT_CLONE_URI="https://intel.prpl.dev/intel/linux.git"
+  CONFIG_KERNEL_GIT_DEPTH="1000"
+  CONFIG_KERNEL_GIT_REF="727acdb060410a936330a2456f641b9473bf5121"
   CONFIG_LTQ_SWITCH_CLI_UGW8_HELP_PRINTOUT=y
   CONFIG_OPENSSL_ENGINE=y
   CONFIG_OPENSSL_PREFER_CHACHA_OVER_GCM=y
