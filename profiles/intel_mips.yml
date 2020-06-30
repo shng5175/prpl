@@ -1,9 +1,11 @@
 ---
-profile: NETGEAR_RAX40
+profiles:
+  - NETGEAR_RAX40
+  - AX6000_2000_ETH_11AXUCI
 target: intel_mips
 subtarget: xrx500
 external_target: True
-description: Build image for the Netgear RAX40
+description: Build images for the Intel MIPS devices - Netgear RAX40 and AxePoint
 feeds:
   - name: feed_target_mips
     uri: https://intel.prpl.dev/intel/feed_target_mips.git

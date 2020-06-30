@@ -43,7 +43,7 @@ def load_yaml(fname: str, profile: dict):
 
     new = yaml.safe_load(profile_file.read_text())
     for n in new:
-        if n in {"profile", "target", "subtarget", "external_target"}:
+        if n in {"target", "subtarget", "external_target"}:
             if profile.get(n):
                 die(f"Duplicate tag found {n}")
             profile.update({n: new.get(n)})
@@ -51,6 +51,8 @@ def load_yaml(fname: str, profile: dict):
             profile["description"].append(new.get(n))
         elif n in {"packages"}:
             profile["packages"].extend(new.get(n))
+        elif n in {"profiles"}:
+            profile["profiles"].extend(new.get(n))
         elif n in {"diffconfig"}:
             profile["diffconfig"] += new.get(n)
         elif n in {"feeds"}:
@@ -86,7 +88,7 @@ if "clean" in sys.argv:
     print("Tree is now clean")
     quit(0)
 
-profile = {"packages": [], "description": [], "diffconfig": "", "feeds": {}}
+profile = {"profiles": [], "packages": [], "description": [], "diffconfig": "", "feeds": {}}
 
 for p in sys.argv[1:]:
     profile = load_yaml(p, profile)
@@ -138,9 +140,14 @@ if profile.get("external_target", False):
         die(f"Error installing external target {profile['target']}")
 
 config_output = f"""CONFIG_TARGET_{profile["target"]}=y
-CONFIG_TARGET_{profile["target"]}_{profile["subtarget"]}=y
-CONFIG_TARGET_{profile["target"]}_{profile["subtarget"]}_DEVICE_{profile["profile"]}=y
-"""
+CONFIG_TARGET_{profile["target"]}_{profile["subtarget"]}=y\n"""
+profiles = profile.get("profiles")
+if len(profiles) > 1:
+    config_output += f"CONFIG_TARGET_MULTI_PROFILE=y\n"
+    for p in profiles:
+        config_output += f"""CONFIG_TARGET_DEVICE_{profile["target"]}_{profile["subtarget"]}_DEVICE_{p}=y\n"""
+else:
+    config_output += f"""CONFIG_TARGET_{profile["target"]}_{profile["subtarget"]}_DEVICE_{profiles[0]}=y\n"""
 
 config_output += f"{profile.get('diffconfig', '')}"
 
