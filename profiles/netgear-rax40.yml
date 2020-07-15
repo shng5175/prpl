@@ -26,7 +26,7 @@ feeds:
     branch: ugw-8.4.1-cleanup
   - name: feed_prpl
     uri: https://git.prpl.dev/prplmesh/feed-prpl.git
-    branch: prpl-19.07
+    branch: dev/prplmesh-wps-backhaul-sta-onboarding
   - name: feed_opensource_apps
     uri: https://intel.prpl.dev/prplmesh/feed_opensource_apps.git
     branch: ugw-8.4.1-cleanup
