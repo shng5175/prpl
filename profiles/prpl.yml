@@ -2,8 +2,8 @@
 description: Add the prpl features
 feeds:
   - name: feed_prpl
-    uri: https://git.prpl.dev/prplmesh/feed-prpl.git
-    branch: prpl-19.07
+    uri: https://gitlab.com/prpl-foundation/prplwrt/feed-prpl.git
+    hash: 8a48e0e15db0ba1aa96657cfc761f3a8afd69faf
 
 packages:
   - prplmesh-dwpal
