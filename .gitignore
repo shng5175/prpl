@@ -17,6 +17,7 @@
 /package/feeds
 /package/openwrt-packages
 /*.patch
+/target/linux/mediatek
 /toolchain_custom
 key-build*
 *.orig
