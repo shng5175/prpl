@@ -2,7 +2,7 @@
 description: Add the prpl features
 feeds:
   - name: feed_prpl
-    uri: https://git.prpl.dev/prplwrt/feed-prpl.git
+    uri: https://gitlab.com/prpl-foundation/prplwrt/feed-prpl.git
     hash: bdec7b15f7f492a60b8ef3b06f7ee057c456e807
 
 packages:
