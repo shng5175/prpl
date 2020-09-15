@@ -6,31 +6,31 @@ external_target: True
 description: Build image for the Netgear RAX40
 feeds:
   - name: feed_target_mips
-    uri: https://intel.prpl.dev/intel/feed_target_mips.git
+    uri: https://gitlab.com/prpl-foundation/intel/feed_target_mips.git
     branch: ugw-8.4.1-cleanup
   - name: feed_datapath
-    uri: https://intel.prpl.dev/intel/feed_datapath.git
+    uri: https://gitlab.com/prpl-foundation/intel/feed_datapath.git
     branch: ugw-8.4.1-cleanup
   - name: feed_ppa
-    uri: https://intel.prpl.dev/intel/feed_ppa.git
+    uri: https://gitlab.com/prpl-foundation/intel/feed_ppa.git
     branch: ugw-8.4.1-cleanup
   - name: feed_gphy_firmware
-    uri: https://intel.prpl.dev/intel/feed_gphy_firmware.git
+    uri: https://gitlab.com/prpl-foundation/intel/feed_gphy_firmware.git
     branch: ugw-8.4.1-cleanup
   - name: feed_switch_api
-    uri: https://intel.prpl.dev/intel/feed_switch_api.git
+    uri: https://gitlab.com/prpl-foundation/intel/feed_switch_api.git
     branch: ugw-8.4.1-cleanup
   - name: feed_wlan_6x
-    uri: https://intel.prpl.dev/intel/feed_wlan_6x.git
+    uri: https://gitlab.com/prpl-foundation/intel/feed_wlan_6x.git
     branch: ugw-8.4.1-cleanup
   - name: feed_prpl
-    uri: https://git.prpl.dev/prplwrt/feed-prpl.git
+    uri: https://gitlab.com/prpl-foundation/prplwrt/feed-prpl.git
     branch: prpl-19.07
   - name: feed_opensource_apps
-    uri: https://intel.prpl.dev/intel/feed_opensource_apps.git
+    uri: https://gitlab.com/prpl-foundation/intel/feed_opensource_apps.git
     branch: ugw-8.4.1-cleanup
   - name: feed_pending
-    uri: https://intel.prpl.dev/intel/feed-pending.git
+    uri: https://gitlab.com/prpl-foundation/intel/feed-pending.git
 
 packages:
   - dwpal_6x-uci
@@ -106,7 +106,7 @@ packages:
 
 diffconfig: |
   CONFIG_DEVEL=y
-  CONFIG_KERNEL_GIT_CLONE_URI="https://intel.prpl.dev/intel/linux.git"
+  CONFIG_KERNEL_GIT_CLONE_URI="https://gitlab.com/prpl-foundation/intel/linux.git"
   CONFIG_KERNEL_GIT_DEPTH="1000"
   CONFIG_KERNEL_GIT_REF="727acdb060410a936330a2456f641b9473bf5121"
   CONFIG_LTQ_SWITCH_CLI_UGW8_HELP_PRINTOUT=y
