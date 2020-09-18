@@ -1,0 +1,24 @@
+---
+profile: glinet_gl-b1300
+target: ipq40xx
+subtarget: generic
+description: Build image for Gl.iNet B1300
+
+# Note: feed_prpl provides its own lucy package and messes UI up
+#       re-adding lucy feed after it overrides it back
+feeds:
+  - name: feed_prpl
+    uri: https://gitlab.com/prpl-foundation/prplwrt/feed-prpl.git
+    branch: prpl-19.07
+  - name: orig_luci
+    uri: https://git.openwrt.org/project/luci.git
+    branch: openwrt-19.07
+
+packages:
+  - gdbserver
+  - strace
+  - libpcap
+  - tcpdump
+  - hostapd-utils
+  - prplmesh-nl80211
+
