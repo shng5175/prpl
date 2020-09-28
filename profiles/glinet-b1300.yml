@@ -1,5 +1,6 @@
 ---
-profile: glinet_gl-b1300
+profiles:
+  - glinet_gl-b1300
 target: ipq40xx
 subtarget: generic
 description: Build image for Gl.iNet B1300
