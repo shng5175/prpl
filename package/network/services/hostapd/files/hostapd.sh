@@ -245,6 +245,8 @@ hostapd_common_add_bss_config() {
 	config_add_boolean sae_require_mfp
 	
 	config_add_string 'owe_transition_bssid:macaddr' 'owe_transition_ssid:string'
+
+	config_add_boolean default_disabled
 }
 
 hostapd_set_vlan_file() {
@@ -799,7 +801,8 @@ wpa_supplicant_add_network() {
 		ssid bssid key \
 		basic_rate mcast_rate \
 		ieee80211w ieee80211r \
-		multi_ap
+		multi_ap \
+		default_disabled
 
 	case "$auth_type" in
 		sae|owe|eap192|eap-eap192)
@@ -812,6 +815,7 @@ wpa_supplicant_add_network() {
 
 	set_default ieee80211r 0
 	set_default multi_ap 0
+	set_default default_disabled 0
 
 	local key_mgmt='NONE'
 	local enc_str=
@@ -844,7 +848,10 @@ wpa_supplicant_add_network() {
 		scan_ssid=""
 	}
 
-	[ "$multi_ap" = 1 -a "$_w_mode" = "sta" ] && append network_data "multi_ap_backhaul_sta=1" "$N$T"
+	[ "$_w_mode" = "sta" ] && {
+		[ "$multi_ap" = 1 ] && append network_data "multi_ap_backhaul_sta=1" "$N$T"
+		[ "$default_disabled" = 1 ] && append network_data "disabled=1" "$N$T"
+	}
 
 	case "$auth_type" in
 		none) ;;
