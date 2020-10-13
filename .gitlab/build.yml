@@ -1,5 +1,7 @@
 .build test config:
   stage: build
+  tags:
+    - firmware-builder
   rules:
     - if: '$CI_COMMIT_BRANCH == "prplwrt" && $CI_PIPELINE_SOURCE == "push"'
       when: delayed
@@ -7,7 +9,6 @@
   image:
     name: python:3.8-slim-buster
   before_script:
-    - printenv
     - touch .build_failed
 
     - apt-get update
