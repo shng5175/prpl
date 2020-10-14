@@ -23,7 +23,7 @@
     - gosu builder scripts/gen_config.py $CI_BUILD_CONFIG 2>&1 | tee logs/build.log
     - gosu builder echo CONFIG_BUILD_LOG=y >> .config
     - gosu builder make defconfig | tee --append logs/build.log
-    - gosu builder make -j $(nproc) 2>&1 | tee --append logs/build.log
+    - gosu builder bash -c "( make -j $(nproc) || make -j1 V=s ) 2>&1" | tee --append logs/build.log
 
     - rm .build_failed
 
