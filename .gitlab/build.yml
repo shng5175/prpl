@@ -7,7 +7,7 @@
       when: delayed
       start_in: '8 hours'
   image:
-    name: python:3.8-slim-buster
+    name: python:3.7-slim-buster
   before_script:
     - touch .build_failed
 
