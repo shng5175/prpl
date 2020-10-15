@@ -60,7 +60,8 @@ class BuildLogAnalyzer:
     def process_log_file(self, path):
         path = os.path.normpath(path)
         filename = os.path.basename(path)
-        dirname, package = os.path.split(path)
+        dirname = os.path.dirname(path)
+        package = dirname.split(os.sep)[-1]
         (step, _) = os.path.splitext(filename)
 
         if step == "check-compile":
