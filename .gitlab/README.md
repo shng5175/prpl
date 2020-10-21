@@ -6,9 +6,17 @@ This directory contains stuff used on the GitLab CI.
 
 Contains definitions for Docker images.
 
+## testbed
+
+Contains definitions for testbed related tests.
+
 ## scripts
 
 Contains scripts used on GitLab CI.
+
+## tests
+
+Contains tests used on GitLab CI.
 
 ## build.yml
 
@@ -50,3 +58,11 @@ Then just put following into `.gitlab/docker/foo/gitlab.yml`
 build Docker image foo:
   extends: .build Docker image
 ```
+
+## testbed.yml
+
+Provides bits needed for runtime testing on real device using [labgrid](https://labgrid.readthedocs.io/en/latest/) Python testing framework.
+
+Supported devices:
+
+ * Netgear RAX40

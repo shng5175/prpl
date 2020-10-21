@@ -1,0 +1,57 @@
+targets:
+
+  netgear-rax40-nand:
+    resources:
+      RawSerialPort:
+        port: "/dev/ttyS1"
+    drivers:
+      ExternalPowerDriver:
+        cmd_on: ssh root@uart-relay.testbed.vpn.true.cz power_on 1
+        cmd_off: ssh root@uart-relay.testbed.vpn.true.cz power_off 1
+      SerialDriver: {}
+      ShellDriver:
+        console_ready: Please press Enter to activate this console.
+        prompt: 'root@[\w()]+:[^ ]+ '
+        login_prompt: built-in shell (ash)
+        username: kingbanik
+      SmallUBootDriver:
+        prompt: 'GRX500 #'
+        boot_secret: ''
+        boot_expression: 'Hit any key to stop autoboot'
+        init_commands:
+          - setenv bootdelay 0
+          - setenv serverip 192.168.1.2
+          - setenv ipaddr 192.168.1.1
+          - setenv bootargs debug earlyprintk console=ttyLTQ0,115200
+          - setenv fullimage NETGEAR_RAX40-squashfs-fullimage.img
+          - run update_fullimage
+          - run run_bootcore
+          - ubi read $(loadaddr) $(kernel_vol)
+          - run flashargs addmisc
+      UBootStrategy: {}
+
+  netgear-rax40-initramfs:
+    resources:
+      RawSerialPort:
+        port: "/dev/ttyS1"
+    drivers:
+      ExternalPowerDriver:
+        cmd_on: ssh root@uart-relay.testbed.vpn.true.cz power_on 1
+        cmd_off: ssh root@uart-relay.testbed.vpn.true.cz power_off 1
+      SerialDriver: {}
+      ShellDriver:
+        console_ready: Please press Enter to activate this console.
+        prompt: 'root@[\w()]+:[^ ]+ '
+        login_prompt: built-in shell (ash)
+        username: kingbanik
+      SmallUBootDriver:
+        prompt: 'GRX500 #'
+        boot_secret: ''
+        boot_expression: 'Hit any key to stop autoboot'
+        init_commands:
+          - setenv bootdelay 0
+          - setenv serverip 192.168.1.2
+          - setenv ipaddr 192.168.1.1
+          - setenv bootargs debug earlyprintk console=ttyLTQ0,115200
+          - tftpboot 0x8f500000 NETGEAR_RAX40-initramfs-kernel.bin
+      UBootStrategy: {}

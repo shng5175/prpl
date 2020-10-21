@@ -1,0 +1,8 @@
+.netgear-rax40 testbed:
+  extends: .testbed true.cz
+  variables:
+    DUT_ARCH: intel_mips
+    DUT_SUBTARGET: xrx500
+    DUT_BOARD: netgear-rax40
+  tags:
+    - dut-netgear-rax40

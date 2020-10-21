@@ -1,0 +1,2 @@
+build Docker image testbed:
+  extends: .build Docker image

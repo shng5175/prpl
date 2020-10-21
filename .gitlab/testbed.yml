@@ -1,0 +1,69 @@
+.testbed:
+  stage: run
+  image: "$CI_REGISTRY_IMAGE/testbed:latest"
+  variables:
+    TESTBED_TFTP_PATH: /var/lib/tftpboot
+    TFTP_IMAGE_PATH: bin/targets/$DUT_ARCH/$DUT_SUBTARGET
+    TARGET_LAN_IP: 192.168.1.1
+    TARGET_LAN_TEST_HOST: 192.168.1.2
+    CRAM_REMOTE_COMMAND: ssh root@$TARGET_LAN_IP
+
+  before_script:
+    - touch .run_failed
+
+    - eval $(ssh-agent -s)
+    - echo "$TESTBED_SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
+    - mkdir -p ~/.ssh; chmod 700 ~/.ssh
+    - ssh-keyscan $TESTBED_UART_RELAY_HOST > ~/.ssh/known_hosts 2> /dev/null
+    - chmod 644 ~/.ssh/known_hosts
+
+    - cp "$TFTP_IMAGE_PATH/$TFTP_IMAGE_FILENAME" "$TESTBED_TFTP_PATH"
+    - .gitlab/scripts/testbed-device.py --target $LABGRID_TARGET boot_into shell
+    - >
+      .gitlab/scripts/testbed-device.py
+      --target $LABGRID_TARGET check_network
+      --network lan
+      --remote-host $TARGET_LAN_TEST_HOST
+
+    - ssh-keyscan $TARGET_LAN_IP >> ~/.ssh/known_hosts 2> /dev/null
+    - ssh root@$TARGET_LAN_IP "ubus call system board" | tee system-$LABGRID_TARGET.json
+
+  script:
+    - sleep 90
+    - set -o pipefail
+
+    - >
+      python3 -m cram
+      --verbose
+      --xunit-file=report.xml
+      .gitlab/tests/cram/generic
+      .gitlab/tests/cram/$DUT_SUBTARGET
+      .gitlab/tests/cram/$DUT_BOARD
+      | tee cram-result-$LABGRID_TARGET.txt
+
+    - rm .run_failed
+
+  after_script:
+    - eval $(ssh-agent -s)
+    - echo "$TESTBED_SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
+    - mkdir -p ~/.ssh; chmod 700 ~/.ssh
+    - ssh-keyscan $TESTBED_UART_RELAY_HOST > ~/.ssh/known_hosts 2> /dev/null
+    - chmod 644 ~/.ssh/known_hosts
+
+    - .gitlab/scripts/testbed-device.py --target $LABGRID_TARGET power off
+
+    - mv console_$LABGRID_TARGET console_$LABGRID_TARGET.txt
+    - test -f .run_failed && .gitlab/scripts/prpl-jira.py run_failure --target $LABGRID_TARGET
+
+  artifacts:
+    expire_in: 1 month
+    when: always
+    paths:
+      - system-$LABGRID_TARGET.json
+      - console_$LABGRID_TARGET.txt
+      - cram-result-$LABGRID_TARGET.txt
+
+.testbed true.cz:
+  extends: .testbed
+  variables:
+    TESTBED_UART_RELAY_HOST: uart-relay.testbed.vpn.true.cz
