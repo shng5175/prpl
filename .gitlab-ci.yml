@@ -1,7 +1,10 @@
 include:
   - local: .gitlab/build.yml
+  - local: .gitlab/docker.yml
+  - local: .gitlab/docker/builder/gitlab.yml
 
 stages:
+  - docker
   - build
   - run
 

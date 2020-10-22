@@ -2,6 +2,10 @@
 
 This directory contains stuff used on the GitLab CI.
 
+## docker
+
+Contains definitions for Docker images.
+
 ## scripts
 
 Contains scripts used on GitLab CI.
@@ -28,3 +32,21 @@ build test netgear-rax40 prpl webui:
 ```
 
 Which is going to build test prplwrt with `netgear-rax40`, `prpl` and `webui` profiles.
+
+## docker.yml
+
+Provides support for building, tagging and pushing the Docker images to image registry.
+
+For example let's build image `foo`.
+
+Prerequisites:
+
+ * Create directory for new Docker image `mkdir -p .gitlab/docker/foo`
+ * Docker image description `$EDITOR .gitlab/docker/foo/Dockefile`
+
+Then just put following into `.gitlab/docker/foo/gitlab.yml`
+
+```yaml
+build Docker image foo:
+  extends: .build Docker image
+```

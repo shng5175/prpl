@@ -1,0 +1,2 @@
+build Docker image builder:
+  extends: .build Docker image
