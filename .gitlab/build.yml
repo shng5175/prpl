@@ -18,6 +18,9 @@
     - scripts/gen_config.py $CI_BUILD_CONFIG 2>&1 | tee logs/build.log
     - echo CONFIG_BUILD_LOG=y >> .config
     - make defconfig | tee --append logs/build.log
+
+    - make -j $(nproc) tools/tar/compile || make -j1 V=s tools/tar/compile 2>&1 | tee --append logs/build.log
+    - make -j $(nproc) download || make -j1 V=s download 2>&1 | tee --append logs/build.log
     - make -j $(nproc) || make -j1 V=s 2>&1 | tee --append logs/build.log
 
     - rm .build_failed
