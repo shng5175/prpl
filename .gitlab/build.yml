@@ -28,7 +28,7 @@
     - rm .build_failed
 
   after_script:
-    - test -f .build_failed && scripts/gitlab/prpl-jira.py build_failure
+    - test -f .build_failed && .gitlab/scripts/prpl-jira.py build_failure
 
   artifacts:
     expire_in: 1 month

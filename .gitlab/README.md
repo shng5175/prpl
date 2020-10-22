@@ -2,6 +2,10 @@
 
 This directory contains stuff used on the GitLab CI.
 
+## scripts
+
+Contains scripts used on GitLab CI.
+
 ## build.yml
 
 Contains definition of the GitLab CI build test job templates used during `build` stage. Those templates can then be extended by other GitLab CI jobs in order to keep things DRY.
