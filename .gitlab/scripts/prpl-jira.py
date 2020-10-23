@@ -139,6 +139,9 @@ class JiraHelper:
             f"{failure_details}"
         )
 
+        if args.dry_run:
+            logging.info(description)
+
         jql = f"""
             project={args.project} AND resolution = Unresolved AND summary ~ '{summary}'
         """
