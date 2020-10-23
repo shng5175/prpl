@@ -82,6 +82,19 @@ class BuildLogAnalyzer:
     def failures(self):
         return self._failures
 
+    def failures_jira_string(self):
+        if not self._failures:
+            return ""
+
+        r = "\nSeems like there are build issues with following items:\n"
+        for f in self._failures:
+            r += f" * {f.name} ({f.step}):\n"
+            for line in f.tail_log:
+                r += f" ** {line}\n"
+            r += "\n"
+
+        return r
+
 
 class JiraHelper:
     def __init__(self, args):
@@ -104,40 +117,7 @@ class JiraHelper:
 
         self.jira = JIRA({"server": args.instance_url}, oauth=oauth_dict)
 
-    def get_build_failure_string(self):
-        if not self.build_failures:
-            return ""
-
-        r = "\nSeems like there are build issues with following items:\n"
-        for f in self.build_failures:
-            r += f" * {f.name} ({f.step}):\n"
-            for line in f.tail_log:
-                r += f" ** {line}\n"
-            r += "\n"
-
-        return r
-
-    def build_failure(self):
-        commit = os.getenv("CI_COMMIT_SHORT_SHA", "commit_sha")
-        self.build_failures = BuildLogAnalyzer(self.args.build_logs_dir).failures()
-
-        issue = self.build_failure_issue()
-        if not issue or not self.build_failures:
-            return
-
-        for failure in self.build_failures:
-            filename = f"{failure.name}_{failure.step}_{commit}.log"
-
-            if self.args.dry_run:
-                logging.info(f"Would add attachment {filename} from {failure.path})")
-                continue
-
-            logging.info(f"Adding attachment {filename} from {failure.path})")
-            self.jira.add_attachment(
-                issue=issue, attachment=failure.path, filename=filename
-            )
-
-    def build_failure_issue(self):
+    def create_or_update_issue(self, failure_type, failure_details):
         args = self.args
         job = os.getenv("CI_JOB_NAME", "job")
         project = os.getenv("CI_PROJECT_NAME", "project")
@@ -146,18 +126,17 @@ class JiraHelper:
         job_url = os.getenv("CI_JOB_URL", "https://job_url")
         commit = os.getenv("CI_COMMIT_SHORT_SHA", "commit_sha")
         commit_message = os.getenv("CI_COMMIT_MESSAGE", "foor bar baz")
-        build_failures = self.get_build_failure_string()
 
-        summary = f"CI build failure in {project}/{branch} during {job}"
+        summary = f"CI {failure_type} failure in {project}/{branch} during {job}"
 
         description = (
-            f"Just noticed build failure during execution of "
+            f"Just noticed {failure_type} failure during execution of "
             f"[{job}|{job_url}] CI job in _{project}/{branch}_ which is now at "
             f"[{commit}|{project_url}/-/commit/{commit}] commit:"
             "{noformat}"
             f"{commit_message}"
             "{noformat}"
-            f"{build_failures}"
+            f"{failure_details}"
         )
 
         jql = f"""
@@ -190,6 +169,28 @@ class JiraHelper:
 
         logging.info(f"Created ({new_issue.key}) {new_issue.fields.summary}")
         return new_issue
+
+    def build_failure(self):
+        commit = os.getenv("CI_COMMIT_SHORT_SHA", "commit_sha")
+        log_analyzer = BuildLogAnalyzer(self.args.build_logs_dir)
+
+        issue = self.create_or_update_issue(
+            "build", log_analyzer.failures_jira_string()
+        )
+        if not issue or not log_analyzer.failures():
+            return
+
+        for failure in log_analyzer.failures():
+            filename = f"{failure.name}_{failure.step}_{commit}.log"
+
+            if self.args.dry_run:
+                logging.info(f"Would add attachment {filename} from {failure.path})")
+                continue
+
+            logging.info(f"Adding attachment {filename} from {failure.path})")
+            self.jira.add_attachment(
+                issue=issue, attachment=failure.path, filename=filename
+            )
 
 
 def main():
