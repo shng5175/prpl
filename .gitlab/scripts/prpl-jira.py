@@ -4,6 +4,8 @@ import re
 import sys
 import os
 import glob
+import json
+import fnmatch
 import logging
 import argparse
 
@@ -17,6 +19,138 @@ class BuildLogFailure:
     step: str
     name: str
     tail_log: list
+
+
+class OpenWrtSystemInfo:
+    def __init__(self, filename):
+        with open(filename, "r") as read_file:
+            self.data = json.load(read_file)
+
+    @property
+    def kernel(self):
+        return self.data["kernel"]
+
+    @property
+    def board_name(self):
+        n = self.data["board_name"]
+        return n.replace(",", "-")
+
+    @property
+    def target(self):
+        return self.data["release"]["target"]
+
+    @property
+    def distribution(self):
+        return self.data["release"]["distribution"]
+
+    @property
+    def revision(self):
+        return self.data["release"]["revision"]
+
+    @property
+    def version(self):
+        return self.data["release"]["version"]
+
+    def sanitize(self, s):
+        return s.replace("+", "-").replace("/", "-").replace(" ", "_")
+
+    def as_tags(self):
+        return self.sanitize(
+            "kernel_{},board_{},target_{},revision_{},version_{},distro_{}".format(
+                self.kernel,
+                self.board_name,
+                self.target,
+                self.revision,
+                self.version,
+                self.distribution,
+            )
+        )
+
+
+class RunLogAnalyzer:
+    def __init__(self, log_dir=os.getcwd()):
+        self._log_dir = log_dir
+        self._log_file_patterns = {
+            "cram": "cram-result-*.txt",
+            "console": "console_*.txt",
+            "system_info": "system-*.json",
+        }
+        self._log_files = {}
+        self.analyze_logs()
+
+    def analyze_logs(self):
+        for filename in os.listdir(self._log_dir):
+            for kind, pattern in self._log_file_patterns.items():
+                if fnmatch.fnmatch(filename, pattern):
+                    self._log_files[kind] = filename
+
+    def logfile_content(self, kind):
+        path = self.logfile_path(kind)
+        if not path:
+            return
+
+        with open(self.logfile_path(kind)) as f:
+            return f.read()
+
+    def logfile_path(self, kind):
+        return os.path.join(self._log_dir, self._log_files.get(kind))
+
+    def log_files(self):
+        return self._log_files
+
+    def logfile_tail_content(self, kind, count=10):
+        path = self.logfile_path(kind)
+        if not path:
+            return
+
+        bufsize = 8192
+        fsize = os.stat(path).st_size
+
+        n = 0
+        with open(path) as f:
+            if bufsize > fsize:
+                bufsize = fsize - 1
+
+            data = []
+            while True:
+                n += 1
+                f.seek(fsize - bufsize * n)
+                data.extend(f.readlines())
+                if len(data) >= count or f.tell() == 0:
+                    return "".join(data[-count:])
+
+    def system_info(self):
+        path = self.logfile_path("system_info")
+        if not path:
+            return
+
+        return OpenWrtSystemInfo(path)
+
+    def failures_jira_string(self):
+        r = ""
+        cram_log = self.logfile_content("cram")
+        console_log = self.logfile_tail_content("console")
+        system_info = self.system_info()
+
+        if system_info:
+            r += "Device under test provided following system details:\n"
+            r += f" * Board: {system_info.board_name}\n"
+            r += f" * Target: {system_info.target}\n"
+            r += f" * Version: {system_info.version}\n"
+            r += f" * Revision: {system_info.revision}\n"
+            r += f" * Kernel: {system_info.kernel}\n"
+
+        if cram_log:
+            r += "{code:title=Cram test results}\n"
+            r += cram_log
+            r += "{code}\n"
+
+        if console_log:
+            r += "{code:title=Console log (last 10 lines)}\n"
+            r += console_log
+            r += "{code}\n"
+
+        return r
 
 
 class BuildLogAnalyzer:
@@ -201,6 +335,30 @@ class JiraHelper:
                 issue=issue, attachment=failure.path, filename=filename
             )
 
+    def run_failure(self):
+        dry_run = self.args.dry_run
+        commit = os.getenv("CI_COMMIT_SHORT_SHA", "commit_sha")
+        log_analyzer = RunLogAnalyzer()
+        log_files = log_analyzer.log_files()
+
+        issue = self.create_or_update_issue("run", log_analyzer.failures_jira_string())
+
+        if not log_files:
+            return
+
+        if not dry_run and not issue:
+            return
+
+        for kind, path in log_files.items():
+            filename = f"{kind}_{commit}.log"
+
+            if dry_run:
+                logging.info(f"Would add attachment {filename} from {path})")
+                continue
+
+            logging.info(f"Adding attachment {filename} from {path})")
+            self.jira.add_attachment(issue=issue, attachment=path, filename=filename)
+
 
 def main():
     logging.basicConfig(
@@ -266,6 +424,14 @@ def main():
         help="Path to directory which contains build logs",
     )
     subparser.set_defaults(func=JiraHelper.build_failure)
+
+    subparser = subparsers.add_parser("run_failure", help="report run failure")
+    subparser.add_argument(
+        "--target",
+        type=str,
+        help="Target on which runtime testing happend",
+    )
+    subparser.set_defaults(func=JiraHelper.run_failure)
 
     args = parser.parse_args()
 
