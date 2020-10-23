@@ -174,19 +174,25 @@ class JiraHelper:
         return new_issue
 
     def build_failure(self):
+        dry_run = self.args.dry_run
         commit = os.getenv("CI_COMMIT_SHORT_SHA", "commit_sha")
         log_analyzer = BuildLogAnalyzer(self.args.build_logs_dir)
+        failures = log_analyzer.failures()
 
         issue = self.create_or_update_issue(
             "build", log_analyzer.failures_jira_string()
         )
-        if not issue or not log_analyzer.failures():
+
+        if not failures:
             return
 
-        for failure in log_analyzer.failures():
+        if not dry_run and not issue:
+            return
+
+        for failure in failures:
             filename = f"{failure.name}_{failure.step}_{commit}.log"
 
-            if self.args.dry_run:
+            if dry_run:
                 logging.info(f"Would add attachment {filename} from {failure.path})")
                 continue
 
