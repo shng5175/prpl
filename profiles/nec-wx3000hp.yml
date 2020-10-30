@@ -1,17 +1,14 @@
 ---
 profiles:
-  - NETGEAR_RAX40
-  - AX6000_2000_ETH_11AXUCI
-  - AX3000_1600_ETH_11AXUCI
   - AX3000_1600_ETH_11AXUCI_ASURADA
 target: intel_mips
 subtarget: xrx500
 external_target: True
-description: Build images for the Intel MIPS devices - Netgear RAX40 and AxePoint
+description: Build images for the Intel MIPS AxePoint3000 device
 feeds:
   - name: feed_target_mips
     uri: https://gitlab.com/prpl-foundation/intel/feed_target_mips.git
-    branch: ugw-8.4.1-cleanup
+    hash: a8424e41823728f9c4a9fb8f7eed7e931761a791
   - name: feed_datapath
     uri: https://gitlab.com/prpl-foundation/intel/feed_datapath.git
     branch: ugw-8.4.1-cleanup
