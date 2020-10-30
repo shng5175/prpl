@@ -45,5 +45,3 @@ RUN \
 USER builder
 ENV HOME /home/builder
 WORKDIR /home/builder/
-
-VOLUME [ "/home/builder" ]
