@@ -9,3 +9,7 @@ Docker image used for build testing OpenWrt/prplWrt.
 ## testbed
 
 Docker image used for runtime testing.
+
+## sdk
+
+Docker image with the target SDK.

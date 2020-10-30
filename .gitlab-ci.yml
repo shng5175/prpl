@@ -3,12 +3,14 @@ include:
   - local: .gitlab/docker.yml
   - local: .gitlab/docker/builder/gitlab.yml
   - local: .gitlab/docker/testbed/gitlab.yml
+  - local: .gitlab/docker/sdk/gitlab.yml
   - local: .gitlab/testbed.yml
   - local: .gitlab/testbed/netgear-rax40.yml
 
 stages:
   - docker
   - build
+  - docker SDK
   - run
 
 build test intel_mips prpl webui:
