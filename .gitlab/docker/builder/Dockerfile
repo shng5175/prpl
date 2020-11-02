@@ -22,6 +22,7 @@ RUN \
 	python3-pip \
 	python3-setuptools \
 	pwgen \
+	rsync \
 	signify-openbsd \
 	subversion \
 	sudo \
