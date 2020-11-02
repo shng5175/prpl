@@ -1,0 +1,91 @@
+stages:
+  - generate
+  - build
+
+.build feed with SDK:
+  stage: build
+  image: registry.gitlab.com/prpl-foundation/prplwrt/prplwrt/sdk:latest
+
+  before_script:
+    - set -o pipefail
+
+    - cd /home/builder
+    - mkdir logs
+
+    - echo CONFIG_BUILD_LOG=y >> .config
+    - make defconfig | tee logs/build.log
+
+    - ./scripts/feeds setup -b src-link,ci,$CI_PROJECT_DIR
+    - >
+      for feed in $CI_SDK_INSTALL_FEEDS ci; do
+        ./scripts/feeds update "$feed" ;
+        ./scripts/feeds install -a -p "$feed" ;
+      done 2>&1 | tee --append logs/build.log
+
+    - sync
+    - sleep 1
+    - sync
+
+  script:
+    - >
+      for package in $CI_SDK_BUILD_PACKAGES; do
+        make -j $(nproc) package/$package/compile || make -j1 package/$package/compile V=sc || exit 1 ;
+      done 2>&1 | tee --append logs/build.log
+
+  after_script:
+    - cp -R /home/builder/logs $CI_PROJECT_DIR
+
+  artifacts:
+    expire_in: 1 month
+    when: always
+    paths:
+      - logs/
+
+.generate SDK package build jobs:
+  stage: generate
+  image: alpine
+
+  variables:
+    CI_SDK_INSTALL_FEEDS: please-provide
+    CI_SDK_BUILD_PACKAGES: |
+      please-provide
+    CI_SDK_PACKAGE_JOBS_TEMPLATE: |
+      include:
+        - remote: https://gitlab.com/prpl-foundation/prplwrt/prplwrt/-/raw/prplwrt/.gitlab/sdk.yml
+      {% for package in env['CI_SDK_BUILD_PACKAGES'].rstrip().split("\n") %}
+      build {{ package | trim }} with SDK:
+        extends: .build feed with SDK
+        variables:
+          CI_SDK_INSTALL_FEEDS: {{ env['CI_SDK_INSTALL_FEEDS'] }}
+          CI_SDK_BUILD_PACKAGES: {{ package | trim }}
+      {% endfor %}
+
+  before_script:
+    - apk add python3 py3-pip
+    - pip3 install jinja2
+
+  script:
+    - |
+      echo "$CI_SDK_PACKAGE_JOBS_TEMPLATE" | python3 -c '
+      import os
+      import sys
+      import jinja2
+      sys.stdout.write(
+        jinja2.Template(sys.stdin.read()
+      ).render(env=os.environ))' > sdk-package-jobs.yml
+    - cat sdk-package-jobs.yml
+
+  artifacts:
+    paths:
+      - sdk-package-jobs.yml
+
+.execute SDK package build jobs:
+  stage: build
+  needs:
+    - generate
+
+  trigger:
+    include:
+      - artifact: sdk-package-jobs.yml
+        job: generate
+    strategy: depend
