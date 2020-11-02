@@ -4,4 +4,4 @@ COPY --chown=builder:builder . /home/builder/
 
 WORKDIR /home/builder
 RUN mkdir .ssh && ssh-keyscan gitlab.com > .ssh/known_hosts
-RUN sed -i 's;base git@gitlab.com:;base https://gitlab.com/;' feeds.conf.default
+RUN sed -i 's;\(http[s]\?\)://\(.*@\);\1://;g' feeds.conf.default
