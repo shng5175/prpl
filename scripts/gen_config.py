@@ -29,8 +29,7 @@ def usage(code: int = 0):
         f"""Usage: {sys.argv[0]} <profile> [options...]
 
     clean           Remove feeds before setup
-    list            List available profiles
-    defconfig       Run make defconfig after setup"""
+    list            List available profiles"""
     )
     quit(code)
 
