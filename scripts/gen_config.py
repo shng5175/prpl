@@ -28,7 +28,7 @@ def usage(code: int = 0):
     print(
         f"""Usage: {sys.argv[0]} <profile> [options...]
 
-    clean           Remove feeds before setup
+    clean           Cleanup feeds related parts in the tree and exit.
     list            List available profiles"""
     )
     quit(code)
