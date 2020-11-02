@@ -1,5 +1,7 @@
 .build Docker image:
   stage: docker
+  tags:
+    - gce
   image: docker:19.03.7
   services:
     - docker:19.03.7-dind
