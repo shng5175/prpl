@@ -8,6 +8,8 @@ stages:
   variables:
     CI_SDK_TOPDIR: /home/builder
     CI_SDK_INSTALL_FEEDS: base packages luci routing
+    CI_SDK_BUILD_CONFIG_EXTRA: >
+      +BUILD_LOG
 
   before_script:
     - set -o pipefail
@@ -15,8 +17,12 @@ stages:
     - cd $CI_SDK_TOPDIR
     - mkdir logs
 
-    - echo CONFIG_BUILD_LOG=y >> .config
-    - make defconfig | tee logs/build.log
+    - >
+      for option in $CI_SDK_BUILD_CONFIG_EXTRA; do
+        echo "$option" | sed -E "s/^\+(.*)$/CONFIG_\1=y/;s/^\-(.*)$/CONFIG_\1=n/" >> .config
+      done
+    - cat .config | tee logs/build.log
+    - make defconfig | tee --append logs/build.log
 
     - echo "src-include defaults feeds.conf.default" > feeds.conf
     - echo "src-link ci $CI_PROJECT_DIR" >> feeds.conf
