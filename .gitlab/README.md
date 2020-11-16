@@ -41,6 +41,10 @@ build test netgear-rax40 prpl webui:
 
 Which is going to build test prplwrt with `netgear-rax40`, `prpl` and `webui` profiles.
 
+Description of CI variables:
+
+ * CI_BUILD_CONFIG_EXTRA - list of additional config options which should be enabled(prefixed with `+`) or disabled (prefixed with `-`), for example `+BUILD_LOG -SDK` would result in `CONFIG_BUILD_LOG=y` and `CONFIG_SDK=y` config symbols in `.config` file.
+
 ## docker.yml
 
 Provides support for building, tagging and pushing the Docker images to image registry.
