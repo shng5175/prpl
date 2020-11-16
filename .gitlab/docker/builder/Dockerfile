@@ -18,6 +18,7 @@ RUN \
 	nmap \
 	openssh-client \
 	python-distlib \
+	python-yaml \
 	python3 \
 	python3-pip \
 	python3-setuptools \
