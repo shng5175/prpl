@@ -27,7 +27,7 @@
 
   after_script:
     - >
-      [ "$CI_COMMIT_BRANCH" == 'prplwrt' ] {
+      [ "$CI_COMMIT_BRANCH" == 'prplwrt' ] && {
         test -f .build_failed && .gitlab/scripts/prpl-jira.py build_failure || true
       } || true
 
