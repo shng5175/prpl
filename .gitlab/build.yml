@@ -5,8 +5,7 @@
     - firmware-builder
   rules:
     - if: '$CI_COMMIT_BRANCH == "prplwrt"'
-      when: delayed
-      start_in: '8 hours'
+    - when: manual
   before_script:
     - touch .build_failed
 
@@ -27,7 +26,10 @@
     - rm .build_failed
 
   after_script:
-    - test -f .build_failed && .gitlab/scripts/prpl-jira.py build_failure
+    - >
+      [ "$CI_COMMIT_BRANCH" == 'prplwrt' ] {
+        test -f .build_failed && .gitlab/scripts/prpl-jira.py build_failure || true
+      } || true
 
   artifacts:
     expire_in: 1 month
