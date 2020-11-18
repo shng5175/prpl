@@ -7,10 +7,12 @@ description: Build image for the Netgear RAX40
 feeds:
   - name: feed_intel
     uri: https://gitlab.com/prpl-foundation/prplwrt/feed-intel.git
-    branch: ugw-8.4.2-cleanup
+    tracking_branch: ugw-8.4.2-cleanup
+    revision: 18d7d0634175c5f0ae832e55766596b9cb82247d
   - name: feed_prpl
     uri: https://gitlab.com/prpl-foundation/prplwrt/feed-prpl.git
-    branch: prpl-19.07
+    tracking_branch: prpl-19.07
+    revision: 2875b63a09cfbc369223648fa355c78b224786ba
 
 packages:
   - dwpal_6x-uci
