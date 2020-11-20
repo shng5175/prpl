@@ -19,14 +19,6 @@ build test intel_mips prpl webui:
     CI_BUILD_CONFIG_EXTRA: >
       +BUILD_LOG +SDK +PACKAGE_prplmesh-dwpal
 
-run test Netgear RAX40 with system on initramfs:
-  dependencies:
-    - build test intel_mips prpl webui
-  extends: .netgear-rax40 testbed
-  variables:
-    LABGRID_TARGET: "$DUT_BOARD-initramfs"
-    TFTP_IMAGE_FILENAME: NETGEAR_RAX40-initramfs-kernel.bin
-
 run test Netgear RAX40 with system on NAND:
   dependencies:
     - build test intel_mips prpl webui
