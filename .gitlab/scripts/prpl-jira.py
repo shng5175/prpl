@@ -93,7 +93,11 @@ class RunLogAnalyzer:
             return f.read()
 
     def logfile_path(self, kind):
-        return os.path.join(self._log_dir, self._log_files.get(kind))
+        filename = self._log_files.get(kind)
+        if not filename:
+            return
+
+        return os.path.join(self._log_dir, filename)
 
     def log_files(self):
         return self._log_files
