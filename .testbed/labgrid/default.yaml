@@ -18,6 +18,7 @@ targets:
         prompt: 'GRX500 #'
         boot_secret: ''
         boot_expression: 'Hit any key to stop autoboot'
+        login_timeout: 60
         init_commands:
           - setenv bootdelay 0
           - setenv serverip 192.168.1.2
@@ -48,6 +49,7 @@ targets:
         prompt: 'GRX500 #'
         boot_secret: ''
         boot_expression: 'Hit any key to stop autoboot'
+        login_timeout: 60
         init_commands:
           - setenv bootdelay 0
           - setenv serverip 192.168.1.2
