@@ -20,6 +20,7 @@ ifneq ($(call qstrip,$(CONFIG_KERNEL_GIT_CLONE_URI)),)
   PKG_SOURCE_PROTO:=git
   PKG_SOURCE_URL:=$(call qstrip,$(CONFIG_KERNEL_GIT_CLONE_URI))
   PKG_SOURCE_VERSION:=$(call qstrip,$(CONFIG_KERNEL_GIT_REF))
+  PKG_MIRROR_HASH:=$(call qstrip,$(CONFIG_KERNEL_GIT_MIRROR_HASH))
   PKG_CLONE_DEPTH:=$(if $(call qstrip,$(CONFIG_KERNEL_GIT_DEPTH)),$(CONFIG_KERNEL_GIT_DEPTH))
 ifdef CHECK
   include $(INCLUDE_DIR)/kernel-version.mk
