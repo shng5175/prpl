@@ -4,7 +4,7 @@ You can contribute to prplMesh in various ways: reporting bugs, improving docume
 
 ## Getting involved
 
-Daily conversations take place on [Slack](https://prplfoundation.slack.com/) in the prplwrt and prplwrt channels.
+Daily conversations take place on [Slack](https://prplfoundation.slack.com/) in #the prplwrt and #prplwrt channels.
 You can ask for an invite to anyone currently involved, e.g. by sending a message to an active contributer on gitlab.
 
 ## Improving documentation
