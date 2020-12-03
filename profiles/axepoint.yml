@@ -12,7 +12,7 @@ feeds:
   - name: feed_prpl
     uri: https://gitlab.com/prpl-foundation/prplwrt/feed-prpl.git
     tracking_branch: prpl-19.07
-    revision: b3236392cb583267734795f20e5cc881264c3510
+    revision: 63dcf92dbaab544e98a17879b56262b2f3009751
 
 packages:
   - dwpal_6x-uci
