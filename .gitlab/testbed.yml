@@ -58,7 +58,7 @@
     - mv console_$LABGRID_TARGET console_$LABGRID_TARGET.txt
     - >
       [ "$CI_COMMIT_BRANCH" == 'prplwrt' ] && {
-        test -f .build_failed &&
+        test -f .run_failed &&
           .gitlab/scripts/prpl-jira.py run_failure --target $LABGRID_TARGET || true
       } || true
 
