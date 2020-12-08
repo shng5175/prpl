@@ -25,6 +25,9 @@ targets:
           - setenv ipaddr 192.168.1.1
           - setenv bootargs debug earlyprintk console=ttyLTQ0,115200
           - setenv fullimage NETGEAR_RAX40-squashfs-fullimage.img
+          - ubi part system_sw
+          - ubi remove rootfs_data
+          - ubi create rootfs_data 0x2000000 dynamic 5
           - run update_fullimage
           - run run_bootcore
           - ubi read $(loadaddr) $(kernel_vol)
