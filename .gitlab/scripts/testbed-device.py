@@ -39,7 +39,7 @@ class TestbedDevice:
         network = self.args.network
         shell = self.target.get_driver("ShellDriver")
         shell.wait_for(
-            'ifstatus {} | jsonfilter -qe "@.up" || true'.format(network), "true"
+            'ifstatus {} | jsonfilter -qe "@.up" || true'.format(network), "true", 60.0
         )
 
         shell.wait_for("ping -c1 {} || true".format(host), ", 0% packet loss", 90.0)
