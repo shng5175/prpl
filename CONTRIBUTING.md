@@ -9,4 +9,4 @@ You can ask for an invite to anyone currently involved, e.g. by sending a messag
 
 ## Improving documentation
 
-High-level developer documentation can be found on [Confluence](https://confluence.prplfoundation.org/display/PRPLWRT), which can be edited in-place.
+High-level developer documentation can be found on [Confluence](https://confluence.prplfoundation.org/display/PRPLWRT), which can be edited in-place. The documentation in confluence is available for prpl members, please refer to the [general contribution guidelines](https://gitlab.com/prpl-foundation/wiki/-/wikis/Contributing) for ways to participate in prpl.
