@@ -1,4 +1,4 @@
-build Docker image sdk:
+build Docker image sdk-intel_mips-xrx500:
   stage: docker SDK
   dependencies:
     - build test intel_mips prpl webui
@@ -7,3 +7,13 @@ build Docker image sdk:
   extends: .build Docker image
   before_script:
     - tar xf bin/targets/intel_mips/xrx500/openwrt-sdk-intel_mips-xrx500_gcc-*_musl.Linux-x86_64.tar.xz --strip=1 -C .gitlab/docker/sdk
+
+build Docker image sdk-ath79-generic:
+  stage: docker SDK
+  dependencies:
+    - build test tplinkC6 prpl webui
+  variables:
+    DOCKER_DOCKERFILE_PATH: .gitlab/docker/sdk
+  extends: .build Docker image
+  before_script:
+    - tar xf bin/targets/ath79/generic/openwrt-sdk-ath79-generic_gcc-*_musl.Linux-x86_64.tar.xz --strip=1 -C .gitlab/docker/sdk
