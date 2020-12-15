@@ -6,7 +6,6 @@ Check that ubus has all expected services available:
 
   $ R ubus list
   dhcp
-  dhcp_event
   dnsmasq
   file
   iwinfo

@@ -17,7 +17,7 @@ build test intel_mips prpl webui:
   extends: .build test config
   variables:
     CI_BUILD_CONFIG_EXTRA: >
-      +BUILD_LOG +SDK +PACKAGE_prplmesh-dwpal
+      +BUILD_LOG +SDK
 
 run test Netgear RAX40 with system on NAND:
   dependencies:
