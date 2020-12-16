@@ -9,8 +9,12 @@ include:
 
 stages:
   - docker
+  - docker test
+  - docker deploy
   - build
   - docker SDK
+  - docker SDK test
+  - docker SDK deploy
   - run
 
 build test intel_mips prpl webui:

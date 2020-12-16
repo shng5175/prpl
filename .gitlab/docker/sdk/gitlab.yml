@@ -1,5 +1,6 @@
 build Docker image sdk-intel_mips-xrx500:
   stage: docker SDK
+  needs: ["build test intel_mips prpl webui"]
   dependencies:
     - build test intel_mips prpl webui
   variables:
@@ -8,8 +9,19 @@ build Docker image sdk-intel_mips-xrx500:
   before_script:
     - tar xf bin/targets/intel_mips/xrx500/openwrt-sdk-intel_mips-xrx500_gcc-*_musl.Linux-x86_64.tar.xz --strip=1 -C .gitlab/docker/sdk
 
+test Docker image sdk-intel_mips-xrx500:
+  extends: .test Docker SDK image
+  needs: ["build Docker image sdk-intel_mips-xrx500"]
+
+deploy Docker image sdk-intel_mips-xrx500:
+  stage: docker SDK deploy
+  extends: .deploy Docker image
+  needs: ["test Docker image sdk-intel_mips-xrx500"]
+
+
 build Docker image sdk-ath79-generic:
   stage: docker SDK
+  needs: ["build test tplinkC6 prpl webui"]
   dependencies:
     - build test tplinkC6 prpl webui
   variables:
@@ -17,3 +29,12 @@ build Docker image sdk-ath79-generic:
   extends: .build Docker image
   before_script:
     - tar xf bin/targets/ath79/generic/openwrt-sdk-ath79-generic_gcc-*_musl.Linux-x86_64.tar.xz --strip=1 -C .gitlab/docker/sdk
+
+test Docker image sdk-ath79-generic:
+  extends: .test Docker SDK image
+  needs: ["build Docker image sdk-ath79-generic"]
+
+deploy Docker image sdk-ath79-generic:
+  stage: docker SDK deploy
+  extends: .deploy Docker image
+  needs: ["test Docker image sdk-ath79-generic"]
