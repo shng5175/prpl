@@ -1,2 +1,4 @@
 build Docker image builder:
   extends: .build Docker image
+  variables:
+    DOCKER_DOCKERFILE_PATH: .gitlab/docker/builder

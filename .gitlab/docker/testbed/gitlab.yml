@@ -1,2 +1,4 @@
 build Docker image testbed:
   extends: .build Docker image
+  variables:
+    DOCKER_DOCKERFILE_PATH: .gitlab/docker/builder
