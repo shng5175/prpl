@@ -1,6 +1,6 @@
 # Contributing to prplWrt
 
-You can contribute to prplMesh in various ways: reporting bugs, improving documentation, improving the code. The complete guidelines for contributions to prpl's several projects can be found [here](https://gitlab.com/prpl-foundation/wiki/-/wikis/Contributing).
+You can contribute to prplMesh in various ways: reporting bugs, improving documentation, improving the code. The complete guidelines for contributions to prpl's several projects can be found [here](https://gitlab.com/groups/prpl-foundation/-/wikis/Contributing).
 
 ## Getting involved
 
