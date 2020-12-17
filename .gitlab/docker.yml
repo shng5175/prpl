@@ -42,7 +42,7 @@
         "
 
 .deploy Docker image:
-  image: docker:latest
+  extends: .docker in docker
   rules:
     - if: '$CI_COMMIT_BRANCH == "prplwrt"'
   script:
