@@ -1,0 +1,8 @@
+.tplink-c6v2 testbed:
+  extends: .testbed true.cz
+  variables:
+    DUT_ARCH: ath79
+    DUT_SUBTARGET: generic
+    DUT_BOARD: tplink-c6v2
+  tags:
+    - dut-tplink-c6v2
