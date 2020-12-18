@@ -1,0 +1,8 @@
+.nec-wx3000hp testbed:
+  extends: .testbed true.cz
+  variables:
+    DUT_ARCH: intel_mips
+    DUT_SUBTARGET: xrx500
+    DUT_BOARD: nec-wx3000hp
+  tags:
+    - dut-nec-wx3000hp

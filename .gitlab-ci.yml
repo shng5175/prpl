@@ -7,6 +7,7 @@ include:
   - local: .gitlab/testbed.yml
   - local: .gitlab/testbed/netgear-rax40.yml
   - local: .gitlab/testbed/tplink-c6v2.yml
+  - local: .gitlab/testbed/nec-wx3000hp.yml
 
 stages:
   - docker
@@ -34,6 +35,14 @@ run test Netgear RAX40 with system on NAND:
   variables:
     LABGRID_TARGET: "$DUT_BOARD-nand"
     TFTP_IMAGE_FILENAME: NETGEAR_RAX40-squashfs-fullimage.img
+
+run test NEC WX3000HP with system on NAND:
+  dependencies:
+    - build test intel_mips prpl webui
+  extends: .nec-wx3000hp testbed
+  variables:
+    LABGRID_TARGET: "$DUT_BOARD-nand"
+    TFTP_IMAGE_FILENAME: AX3000_1600_ETH_11AXUCI_ASURADA-squashfs-fullimage.img
 
 run test TP-Link Archer C6v2 with system on initramfs:
   dependencies:
