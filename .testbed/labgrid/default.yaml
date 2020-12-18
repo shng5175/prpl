@@ -3,7 +3,7 @@ targets:
   netgear-rax40-nand:
     resources:
       RawSerialPort:
-        port: "/dev/ttyS1"
+        port: "/dev/netgear-rax40"
     drivers:
       ExternalPowerDriver:
         cmd_on: ssh root@uart-relay.testbed.vpn.true.cz power_on 1
@@ -64,7 +64,7 @@ targets:
   tplink-c6v2-initramfs:
     resources:
       RawSerialPort:
-        port: "/dev/ttyUSB0"
+        port: "/dev/tplink-c6v2"
     drivers:
       ExternalPowerDriver:
         cmd_on: ssh root@uart-relay.testbed.vpn.true.cz power_on 0
