@@ -4,18 +4,23 @@ stages:
 
 .build feed with SDK:
   stage: build
-  image: registry.gitlab.com/prpl-foundation/prplwrt/prplwrt/sdk:latest
+  image: $CI_SDK_IMAGE
+  variables:
+    CI_SDK_TOPDIR: /home/builder
+    CI_SDK_INSTALL_FEEDS: base packages luci routing
 
   before_script:
     - set -o pipefail
 
-    - cd /home/builder
+    - cd $CI_SDK_TOPDIR
     - mkdir logs
 
     - echo CONFIG_BUILD_LOG=y >> .config
     - make defconfig | tee logs/build.log
 
-    - ./scripts/feeds setup -b src-link,ci,$CI_PROJECT_DIR
+    - echo "src-include defaults feeds.conf.default" > feeds.conf
+    - echo "src-link ci $CI_PROJECT_DIR" >> feeds.conf
+
     - >
       for feed in $CI_SDK_INSTALL_FEEDS ci; do
         ./scripts/feeds update "$feed" ;
@@ -28,12 +33,16 @@ stages:
 
   script:
     - >
+      test -n "$CI_SDK_BEFORE_COMPILE_COMMAND" &&
+        echo "Running CI_SDK_BEFORE_COMPILE_COMMAND=$CI_SDK_BEFORE_COMPILE_COMMAND" &&
+        /bin/sh -c "$CI_SDK_BEFORE_COMPILE_COMMAND"
+    - >
       for package in $CI_SDK_BUILD_PACKAGES; do
         make -j $(nproc) package/$package/compile || make -j1 package/$package/compile V=sc || exit 1 ;
       done 2>&1 | tee --append logs/build.log
 
   after_script:
-    - cp -R /home/builder/logs $CI_PROJECT_DIR
+    - cp -R "$CI_SDK_TOPDIR/logs" $CI_PROJECT_DIR
 
   artifacts:
     expire_in: 1 month
@@ -46,18 +55,18 @@ stages:
   image: alpine
 
   variables:
-    CI_SDK_INSTALL_FEEDS: please-provide
     CI_SDK_BUILD_PACKAGES: |
       please-provide
     CI_SDK_PACKAGE_JOBS_TEMPLATE: |
       include:
         - remote: https://gitlab.com/prpl-foundation/prplwrt/prplwrt/-/raw/prplwrt/.gitlab/sdk.yml
-      {% for package in env['CI_SDK_BUILD_PACKAGES'].rstrip().split("\n") %}
-      build {{ package | trim }} with SDK:
-        extends: .build feed with SDK
+      {% for sdk in env['CI_SDK_TARGETS'].rstrip().split("\n") %}
+        {% for package in env['CI_SDK_BUILD_PACKAGES'].rstrip().split("\n") %}
+      build {{ package | trim }} with {{ sdk | trim }} SDK:
+        extends: .build feed with {{ sdk | trim }} SDK
         variables:
-          CI_SDK_INSTALL_FEEDS: {{ env['CI_SDK_INSTALL_FEEDS'] }}
           CI_SDK_BUILD_PACKAGES: {{ package | trim }}
+        {% endfor %}
       {% endfor %}
 
   before_script:
@@ -89,3 +98,25 @@ stages:
       - artifact: sdk-package-jobs.yml
         job: generate
     strategy: depend
+
+.build feed with OpenWrt SDK:
+  extends: .build feed with SDK
+  variables:
+    CI_SDK_BEFORE_COMPILE_COMMAND: sudo apt-get update; sudo apt-get install -y python-yaml
+    CI_SDK_TOPDIR: /home/build/openwrt
+
+.build feed with intel_mips-xrx500 SDK:
+  extends: .build feed with SDK
+  variables:
+    CI_SDK_IMAGE: registry.gitlab.com/prpl-foundation/prplwrt/prplwrt/sdk-intel_mips-xrx500:latest
+    CI_SDK_INSTALL_FEEDS: base packages luci routing feed_intel
+
+.build feed with ath79-generic SDK:
+  extends: .build feed with SDK
+  variables:
+    CI_SDK_IMAGE: registry.gitlab.com/prpl-foundation/prplwrt/prplwrt/sdk-ath79-generic:latest
+
+.build feed with mvebu-cortexa9-19.07.5 SDK:
+  extends: .build feed with OpenWrt SDK
+  variables:
+    CI_SDK_IMAGE: openwrtorg/sdk:mvebu-cortexa9-19.07.5
