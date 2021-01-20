@@ -8,7 +8,7 @@ stages:
   variables:
     CI_SDK_TOPDIR: /home/builder
     CI_SDK_INSTALL_FEEDS: base packages luci routing
-    CI_SDK_BUILD_CONFIG_EXTRA: >
+    CI_SDK_BUILD_CONFIG: >
       +BUILD_LOG -AUTOREMOVE -ALL -ALL_NONSHARED -ALL_KMODS -SIGNED_PACKAGES
 
   before_script:
@@ -17,13 +17,6 @@ stages:
     - cd $CI_SDK_TOPDIR
     - mkdir logs
 
-    - >
-      for option in $CI_SDK_BUILD_CONFIG_EXTRA; do
-        echo "$option" | sed -E "s/^\+(.*)$/CONFIG_\1=y/;s/^\-(.*)$/CONFIG_\1=n/" >> .config
-      done
-    - cat .config | tee logs/build.log
-    - make defconfig | tee --append logs/build.log
-
     - echo "src-include defaults feeds.conf.default" > feeds.conf
     - echo "src-link ci $CI_PROJECT_DIR" >> feeds.conf
 
@@ -31,7 +24,19 @@ stages:
       for feed in $CI_SDK_INSTALL_FEEDS ci; do
         ./scripts/feeds update "$feed" ;
         ./scripts/feeds install -a -p "$feed" ;
-      done 2>&1 | tee --append logs/build.log
+      done 2>&1 | tee logs/build.log
+
+    - sync
+    - sleep 1
+    - sync
+
+    - >
+      for option in $CI_SDK_BUILD_CONFIG $CI_SDK_BUILD_CONFIG_EXTRA; do
+        echo "$option" | sed -E "s/^\+(.*)$/CONFIG_\1=y/;s/^\-(.*)$/CONFIG_\1=n/" >> .config
+      done
+    - cat .config | tee --append logs/build.log
+    - make defconfig | tee --append logs/build.log
+    - ./scripts/diffconfig.sh | tee --append logs/build.log
 
     - sync
     - sleep 1
