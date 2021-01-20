@@ -9,7 +9,7 @@ stages:
     CI_SDK_TOPDIR: /home/builder
     CI_SDK_INSTALL_FEEDS: base packages luci routing
     CI_SDK_BUILD_CONFIG_EXTRA: >
-      +BUILD_LOG
+      +BUILD_LOG -AUTOREMOVE -ALL -ALL_NONSHARED -ALL_KMODS -SIGNED_PACKAGES
 
   before_script:
     - set -o pipefail
