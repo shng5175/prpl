@@ -59,3 +59,24 @@ deploy Docker image sdk-ipq40xx-generic:
   stage: docker SDK deploy
   extends: .deploy Docker image
   needs: ["test Docker image sdk-ipq40xx-generic"]
+
+
+build Docker image sdk-mvebu-cortexa9:
+  stage: docker SDK
+  needs: ["build test mvebu prpl webui"]
+  dependencies:
+    - build test mvebu prpl webui
+  variables:
+    DOCKER_DOCKERFILE_PATH: .gitlab/docker/sdk
+  extends: .build Docker image
+  before_script:
+    - tar xf bin/targets/mvebu/cortexa9/openwrt-sdk-mvebu-cortexa9_gcc*Linux-x86_64.tar.xz --strip=1 -C .gitlab/docker/sdk
+
+test Docker image sdk-mvebu-cortexa9:
+  extends: .test Docker SDK image
+  needs: ["build Docker image sdk-mvebu-cortexa9"]
+
+deploy Docker image sdk-mvebu-cortexa9:
+  stage: docker SDK deploy
+  extends: .deploy Docker image
+  needs: ["test Docker image sdk-mvebu-cortexa9"]

@@ -31,6 +31,9 @@ build test tplinkC6 prpl webui:
 build test ipq40xx prpl webui:
   extends: .build test config
 
+build test mvebu prpl webui:
+  extends: .build test config
+
 run test Netgear RAX40 with system on NAND:
   dependencies:
     - build test intel_mips prpl webui
