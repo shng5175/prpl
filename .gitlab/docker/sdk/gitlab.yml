@@ -38,3 +38,24 @@ deploy Docker image sdk-ath79-generic:
   stage: docker SDK deploy
   extends: .deploy Docker image
   needs: ["test Docker image sdk-ath79-generic"]
+
+
+build Docker image sdk-ipq40xx-generic:
+  stage: docker SDK
+  needs: ["build test ipq40xx prpl webui"]
+  dependencies:
+    - build test ipq40xx prpl webui
+  variables:
+    DOCKER_DOCKERFILE_PATH: .gitlab/docker/sdk
+  extends: .build Docker image
+  before_script:
+    - tar xf bin/targets/ipq40xx/generic/openwrt-sdk-ipq40xx-generic_gcc*.Linux-x86_64.tar.xz --strip=1 -C .gitlab/docker/sdk
+
+test Docker image sdk-ipq40xx-generic:
+  extends: .test Docker SDK image
+  needs: ["build Docker image sdk-ipq40xx-generic"]
+
+deploy Docker image sdk-ipq40xx-generic:
+  stage: docker SDK deploy
+  extends: .deploy Docker image
+  needs: ["test Docker image sdk-ipq40xx-generic"]
