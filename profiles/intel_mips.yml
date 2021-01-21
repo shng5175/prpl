@@ -89,7 +89,6 @@ packages:
   - uuidgen
 
 diffconfig: |
-  CONFIG_BUILD_LOG=y
   CONFIG_DEVEL=y
   CONFIG_KERNEL_GIT_CLONE_URI="https://gitlab.com/prpl-foundation/intel/linux.git"
   CONFIG_KERNEL_GIT_DEPTH=""
