@@ -5,7 +5,6 @@ include:
   - local: .gitlab/docker/testbed/gitlab.yml
   - local: .gitlab/docker/sdk/gitlab.yml
   - local: .gitlab/testbed.yml
-  - local: .gitlab/testbed/tplink-c6v2.yml
   - local: .gitlab/testbed/nec-wx3000hp.yml
 
 stages:
@@ -24,9 +23,6 @@ build test intel_mips prpl webui:
     CI_BUILD_CONFIG_EXTRA: >
       +BUILD_LOG +SDK
 
-build test tplinkC6 prpl webui:
-  extends: .build test config
-
 build test ipq40xx prpl webui:
   extends: .build test config
 
@@ -40,11 +36,3 @@ run test NEC WX3000HP with system on NAND:
   variables:
     LABGRID_TARGET: "$DUT_BOARD-nand"
     TFTP_IMAGE_FILENAME: AX3000_1600_ETH_11AXUCI_ASURADA-squashfs-fullimage.img
-
-run test TP-Link Archer C6v2 with system on initramfs:
-  dependencies:
-    - build test tplinkC6 prpl webui
-  extends: .tplink-c6v2 testbed
-  variables:
-    LABGRID_TARGET: "$DUT_BOARD-initramfs"
-    TFTP_IMAGE_FILENAME: openwrt-ath79-generic-tplink_archer-c6-v2-initramfs-kernel.bin
