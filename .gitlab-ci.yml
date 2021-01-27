@@ -5,7 +5,6 @@ include:
   - local: .gitlab/docker/testbed/gitlab.yml
   - local: .gitlab/docker/sdk/gitlab.yml
   - local: .gitlab/testbed.yml
-  - local: .gitlab/testbed/netgear-rax40.yml
   - local: .gitlab/testbed/tplink-c6v2.yml
   - local: .gitlab/testbed/nec-wx3000hp.yml
 
@@ -33,14 +32,6 @@ build test ipq40xx prpl webui:
 
 build test mvebu prpl webui:
   extends: .build test config
-
-run test Netgear RAX40 with system on NAND:
-  dependencies:
-    - build test intel_mips prpl webui
-  extends: .netgear-rax40 testbed
-  variables:
-    LABGRID_TARGET: "$DUT_BOARD-nand"
-    TFTP_IMAGE_FILENAME: NETGEAR_RAX40-squashfs-fullimage.img
 
 run test NEC WX3000HP with system on NAND:
   dependencies:
