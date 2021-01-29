@@ -23,7 +23,7 @@ RUN \
 RUN localedef -i en_US -c -f UTF-8 -A /usr/share/locale/locale.alias en_US.UTF-8
 ENV LANG=en_US.utf8
 
-ENV LABGRID_COMMIT=81d1b1619deb
+ENV LABGRID_COMMIT=1c0a76e21f5e
 RUN git clone --branch wip/testbed https://github.com/ynezz/labgrid
 WORKDIR labgrid
 RUN git reset --hard $LABGRID_COMMIT
