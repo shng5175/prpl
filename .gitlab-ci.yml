@@ -6,6 +6,7 @@ include:
   - local: .gitlab/docker/sdk/gitlab.yml
   - local: .gitlab/testbed.yml
   - local: .gitlab/testbed/nec-wx3000hp.yml
+  - local: .gitlab/testbed/glinet-b1300.yml
 
 stages:
   - docker
@@ -36,3 +37,11 @@ run test NEC WX3000HP with system on NAND:
   variables:
     LABGRID_TARGET: "$DUT_BOARD-nand"
     TFTP_IMAGE_FILENAME: AX3000_1600_ETH_11AXUCI_ASURADA-squashfs-fullimage.img
+
+run test Gl.iNet B1300 with system on initramfs:
+  dependencies:
+    - build test ipq40xx prpl webui
+  extends: .glinet-b1300 testbed
+  variables:
+    LABGRID_TARGET: "$DUT_BOARD-initramfs"
+    TFTP_IMAGE_FILENAME: openwrt-ipq40xx-generic-glinet_gl-b1300-initramfs-fit-uImage.itb
