@@ -1,0 +1,8 @@
+.turris-omnia testbed:
+  extends: .testbed true.cz
+  variables:
+    DUT_ARCH: mvebu
+    DUT_SUBTARGET: cortexa9
+    DUT_BOARD: turris-omnia
+  tags:
+    - dut-turris-omnia
