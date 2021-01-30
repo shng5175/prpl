@@ -123,11 +123,6 @@ stages:
     CI_SDK_IMAGE: registry.gitlab.com/prpl-foundation/prplwrt/prplwrt/sdk-intel_mips-xrx500:latest
     CI_SDK_INSTALL_FEEDS: base packages luci routing feed_intel
 
-.build feed with ath79-generic SDK:
-  extends: .build feed with SDK
-  variables:
-    CI_SDK_IMAGE: registry.gitlab.com/prpl-foundation/prplwrt/prplwrt/sdk-ath79-generic:latest
-
 .build feed with ipq40xx-generic SDK:
   extends: .build feed with SDK
   variables:
