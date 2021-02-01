@@ -65,7 +65,7 @@
 
     - .gitlab/scripts/testbed-device.py --target $LABGRID_TARGET power off
 
-    - mv console_$LABGRID_TARGET console_$LABGRID_TARGET.txt
+    - mv console_$LABGRID_TARGET console_$LABGRID_TARGET.txt || true
     - >
       [ "$CI_COMMIT_BRANCH" == 'prplwrt' ] && {
         test -f .run_failed &&
