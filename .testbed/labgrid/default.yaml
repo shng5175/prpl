@@ -157,7 +157,8 @@ targets:
       ExternalPowerDriver:
         cmd_on: ssh root@uart-relay.testbed.vpn.true.cz power_on 0
         cmd_off: ssh root@uart-relay.testbed.vpn.true.cz power_off 0
-      SerialDriver: {}
+      SerialDriver:
+        txdelay: 0.01
       ShellDriver:
         console_ready: Please press Enter to activate this console.
         prompt: 'root@[\w()]+:[^ ]+ '
