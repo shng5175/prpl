@@ -73,9 +73,19 @@ def main():
         help="path for console logfile (default: %(default)s)",
     )
     parser.add_argument(
-        "-v", "--verbose", action="count", default=0, help="enable verbose mode"
+        "-v",
+        "--verbose",
+        action="count",
+        default=int(os.environ.get("TB_VERBOSE", 0)),
+        help="enable verbose mode",
     )
-    parser.add_argument("-d", "--debug", action="store_true", help="enable debug mode")
+    parser.add_argument(
+        "-d",
+        "--debug",
+        action="store_true",
+        default=os.environ.get("TB_DEBUG"),
+        help="enable debug mode",
+    )
 
     subparsers = parser.add_subparsers(dest="command", title="available subcommands")
 
