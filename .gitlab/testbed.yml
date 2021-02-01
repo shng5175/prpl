@@ -54,11 +54,14 @@
     - chmod 644 ~/.ssh/known_hosts
 
     - ssh-keyscan $TARGET_LAN_IP >> ~/.ssh/known_hosts 2> /dev/null
-    - ssh root@$TARGET_LAN_IP ps | tee processes-$LABGRID_TARGET.txt
-    - ssh root@$TARGET_LAN_IP dmesg | tee dmesg-$LABGRID_TARGET.txt
-    - ssh root@$TARGET_LAN_IP logread | tee logread-$LABGRID_TARGET.txt
-    - ssh root@$TARGET_LAN_IP cat /etc/config/network | tee uci-network-$LABGRID_TARGET.txt
-    - ssh root@$TARGET_LAN_IP cat /etc/config/wireless | tee uci-wireless-$LABGRID_TARGET.txt
+    - >
+      ssh root@$TARGET_LAN_IP exit && {
+        ssh root@$TARGET_LAN_IP ps | tee processes-$LABGRID_TARGET.txt
+        ssh root@$TARGET_LAN_IP dmesg | tee dmesg-$LABGRID_TARGET.txt
+        ssh root@$TARGET_LAN_IP logread | tee logread-$LABGRID_TARGET.txt
+        ssh root@$TARGET_LAN_IP cat /etc/config/network | tee uci-network-$LABGRID_TARGET.txt
+        ssh root@$TARGET_LAN_IP cat /etc/config/wireless | tee uci-wireless-$LABGRID_TARGET.txt
+      } || true
 
     - .gitlab/scripts/testbed-device.py --target $LABGRID_TARGET power off
 
