@@ -28,6 +28,8 @@ RUN git clone --branch wip/testbed https://gitlab.com/prpl-foundation/prplwrt/la
 WORKDIR labgrid
 RUN git reset --hard $LABGRID_COMMIT
 
+RUN pip3 install -U pip
+
 RUN \
 	pip3 install -r requirements.txt && \
 	python3 setup.py install
