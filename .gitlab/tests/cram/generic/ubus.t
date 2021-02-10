@@ -4,7 +4,7 @@ Create R alias:
 
 Check that ubus has all expected services available:
 
-  $ R ubus list
+  $ R ubus list | grep -v dhcp_event
   dhcp
   dnsmasq
   file
