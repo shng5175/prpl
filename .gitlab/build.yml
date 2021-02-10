@@ -5,7 +5,7 @@
     - firmware-builder
   variables:
     CI_BUILD_CONFIG: >
-      +BUILD_LOG +SDK
+      +DEVEL +BUILD_LOG +SDK
   rules:
     - if: '$CI_COMMIT_BRANCH == "prplwrt"'
     - when: manual
