@@ -4,7 +4,7 @@
   tags:
     - firmware-builder
   variables:
-    CI_BUILD_CONFIG_EXTRA: >
+    CI_BUILD_CONFIG: >
       +BUILD_LOG +SDK
   rules:
     - if: '$CI_COMMIT_BRANCH == "prplwrt"'
@@ -16,10 +16,10 @@
     - mkdir logs
     - set -o pipefail
 
-    - export CI_BUILD_CONFIG="$(echo $CI_JOB_NAME | sed 's/build test \(.*\)/\1/')"
-    - scripts/gen_config.py $CI_BUILD_CONFIG 2>&1 | tee logs/build.log
+    - export CI_BUILD_PROFILE="$(echo $CI_JOB_NAME | sed 's/build test \(.*\)/\1/')"
+    - scripts/gen_config.py $CI_BUILD_PROFILE 2>&1 | tee logs/build.log
     - >
-      for option in $CI_BUILD_CONFIG_EXTRA; do
+      for option in $CI_BUILD_CONFIG $CI_BUILD_CONFIG_EXTRA; do
         echo "$option" | sed -E "s/^\+(.*)$/CONFIG_\1=y/;s/^\-(.*)$/CONFIG_\1=n/" >> .config
       done
     - cat .config
