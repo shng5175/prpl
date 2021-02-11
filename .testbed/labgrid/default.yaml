@@ -146,7 +146,8 @@ targets:
           - setenv serverip 192.168.1.2
           - setenv ipaddr 192.168.1.1
         boot_command_delay: 5
-        boot_command: tftpboot 0x84000000 openwrt-ipq40xx-generic-glinet_gl-b1300-initramfs-fit-uImage.itb && bootm 0x84000000
+        boot_timeout: 50
+        boot_command: tftpboot 0x83000000 openwrt-ipq40xx-generic-glinet_gl-b1300-initramfs-fit-uImage.itb && bootm 0x83000000
       UBootStrategy: {}
 
   turris-omnia-initramfs:
