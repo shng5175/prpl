@@ -2,6 +2,7 @@
 profiles:
   - NETGEAR_RAX40
   - AX6000_2000_ETH_11AXUCI
+  - AX3000_1600_ETH_11AXUCI
   - AX3000_1600_ETH_11AXUCI_ASURADA
 target: intel_mips
 subtarget: xrx500
