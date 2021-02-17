@@ -72,6 +72,7 @@
     expire_in: 1 month
     when: always
     paths:
+      - .gitlab/tests/cram/**/*.t.err
       - processes-$LABGRID_TARGET.txt
       - dmesg-$LABGRID_TARGET.txt
       - logread-$LABGRID_TARGET.txt
