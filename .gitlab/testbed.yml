@@ -12,7 +12,6 @@
     CRAM_REMOTE_COMMAND: ssh root@$TARGET_LAN_IP
     CRAM_TEST_SUITE: |
       .gitlab/tests/cram/generic
-      .gitlab/tests/cram/$DUT_SUBTARGET
       .gitlab/tests/cram/$DUT_BOARD
 
   before_script:
