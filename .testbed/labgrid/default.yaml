@@ -150,6 +150,34 @@ targets:
         boot_command: tftpboot 0x83000000 openwrt-ipq40xx-generic-glinet_gl-b1300-initramfs-fit-uImage.itb && bootm 0x83000000
       UBootStrategy: {}
 
+  glinet-b1300-nor:
+    resources:
+      RawSerialPort:
+        port: "/dev/glinet-b1300"
+    drivers:
+      ExternalPowerDriver:
+        cmd_on: ssh root@uart-relay.testbed.vpn.true.cz power_on 1
+        cmd_off: ssh root@uart-relay.testbed.vpn.true.cz power_off 1
+      SerialDriver: {}
+      ShellDriver:
+        console_ready: Please press Enter to activate this console.
+        prompt: 'root@[\w()]+:[^ ]+ '
+        login_prompt: built-in shell (ash)
+        await_login_timeout: 15
+        username: kingbanik
+      UBootDriver:
+        prompt: '\(IPQ40xx\) # '
+        password: 'gl'
+        password_prompt: 'Hit "gl" key to stop booting'
+        init_commands:
+          - setenv bootdelay 0
+          - setenv serverip 192.168.1.2
+          - setenv ipaddr 192.168.1.1
+        boot_command_delay: 5
+        boot_timeout: 180
+        boot_command: tftpboot 0x84000000 openwrt-ipq40xx-generic-glinet_gl-b1300-squashfs-sysupgrade.bin && sf probe && sf erase 0x180000 0x1e80000 && sf write 0x84000000 0x180000 $filesize && bootipq
+      UBootStrategy: {}
+
   turris-omnia-initramfs:
     resources:
       RawSerialPort:
