@@ -33,6 +33,8 @@
       --remote-host $TARGET_LAN_TEST_HOST
 
     - ssh-keyscan $TARGET_LAN_IP >> ~/.ssh/known_hosts 2> /dev/null
+    - ssh root@$TARGET_LAN_IP logread > logread-$LABGRID_TARGET.txt
+    - ssh root@$TARGET_LAN_IP "uci set system.@system[0].log_size='512'; uci commit system; /etc/init.d/log restart"
     - ssh root@$TARGET_LAN_IP "ubus call system board" | tee system-$LABGRID_TARGET.json
 
   script:
@@ -53,7 +55,7 @@
       ssh root@$TARGET_LAN_IP exit && {
         ssh root@$TARGET_LAN_IP ps > processes-$LABGRID_TARGET.txt
         ssh root@$TARGET_LAN_IP dmesg > dmesg-$LABGRID_TARGET.txt
-        ssh root@$TARGET_LAN_IP logread > logread-$LABGRID_TARGET.txt
+        ssh root@$TARGET_LAN_IP logread >> logread-$LABGRID_TARGET.txt
         ssh root@$TARGET_LAN_IP cat /etc/config/network > uci-network-$LABGRID_TARGET.txt
         ssh root@$TARGET_LAN_IP cat /etc/config/wireless > uci-wireless-$LABGRID_TARGET.txt
         ssh root@$TARGET_LAN_IP cat /etc/config/prplmesh > uci-prplmesh-$LABGRID_TARGET.txt
