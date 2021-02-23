@@ -4,5 +4,6 @@
     DUT_ARCH: intel_mips
     DUT_SUBTARGET: xrx500
     DUT_BOARD: nec-wx3000hp
+    DUT_SLEEP_AFTER_BOOT: 180
   tags:
     - dut-nec-wx3000hp
