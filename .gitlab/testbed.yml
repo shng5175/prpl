@@ -50,11 +50,13 @@
     - ssh-keyscan $TARGET_LAN_IP >> ~/.ssh/known_hosts 2> /dev/null
     - >
       ssh root@$TARGET_LAN_IP exit && {
-        ssh root@$TARGET_LAN_IP ps | tee processes-$LABGRID_TARGET.txt
-        ssh root@$TARGET_LAN_IP dmesg | tee dmesg-$LABGRID_TARGET.txt
-        ssh root@$TARGET_LAN_IP logread | tee logread-$LABGRID_TARGET.txt
-        ssh root@$TARGET_LAN_IP cat /etc/config/network | tee uci-network-$LABGRID_TARGET.txt
-        ssh root@$TARGET_LAN_IP cat /etc/config/wireless | tee uci-wireless-$LABGRID_TARGET.txt
+        ssh root@$TARGET_LAN_IP ps > processes-$LABGRID_TARGET.txt
+        ssh root@$TARGET_LAN_IP dmesg > dmesg-$LABGRID_TARGET.txt
+        ssh root@$TARGET_LAN_IP logread > logread-$LABGRID_TARGET.txt
+        ssh root@$TARGET_LAN_IP cat /etc/config/network > uci-network-$LABGRID_TARGET.txt
+        ssh root@$TARGET_LAN_IP cat /etc/config/wireless > uci-wireless-$LABGRID_TARGET.txt
+        ssh root@$TARGET_LAN_IP cat /etc/config/prplmesh > uci-prplmesh-$LABGRID_TARGET.txt
+        scp -r root@${TARGET_LAN_IP}:/tmp/beerocks/logs prplmesh_beerocks_logs > /dev/null
       } || true
 
     - .gitlab/scripts/testbed-device.py --target $LABGRID_TARGET power off
@@ -72,11 +74,11 @@
     when: always
     paths:
       - .gitlab/tests/cram/**/*.t.err
+      - prplmesh_beerocks_logs
       - processes-$LABGRID_TARGET.txt
       - dmesg-$LABGRID_TARGET.txt
       - logread-$LABGRID_TARGET.txt
-      - uci-network-$LABGRID_TARGET.txt
-      - uci-wireless-$LABGRID_TARGET.txt
+      - uci-*-$LABGRID_TARGET.txt
       - system-$LABGRID_TARGET.json
       - console_$LABGRID_TARGET.txt
       - cram-result-$LABGRID_TARGET.txt
