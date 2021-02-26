@@ -133,7 +133,7 @@ stages:
   variables:
     CI_SDK_IMAGE: registry.gitlab.com/prpl-foundation/prplwrt/prplwrt/sdk-mvebu-cortexa9:latest
 
-.build feed with ath79-generic-19.07.6 SDK:
+.build feed with ath79-generic-19.07.7 SDK:
   extends: .build feed with OpenWrt SDK
   variables:
-    CI_SDK_IMAGE: openwrtorg/sdk:ath79-generic-19.07.6
+    CI_SDK_IMAGE: openwrtorg/sdk:ath79-generic-19.07.7
