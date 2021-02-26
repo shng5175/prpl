@@ -26,11 +26,9 @@ Signed-off-by: Hans Dedecker <dedeckeh@gmail.com>
  interface-ip.c | 69 ++++++++++++++++++++++++++++++++++++++++++++++++++
  1 file changed, 69 insertions(+)
 
-diff --git a/interface-ip.c b/interface-ip.c
-index 37680001a9f1..1444fbfcdecf 100644
 --- a/interface-ip.c
 +++ b/interface-ip.c
-@@ -684,6 +684,22 @@ interface_update_proto_addr(struct vlist_tree *tree,
+@@ -680,6 +680,22 @@ interface_update_proto_addr(struct vlist
  			if (!(a_old->flags & DEVADDR_EXTERNAL)) {
  				interface_handle_subnet_route(iface, a_old, false);
  				system_del_address(dev, a_old);
@@ -53,7 +51,7 @@ index 37680001a9f1..1444fbfcdecf 100644
  			}
  		}
  		free(a_old->pclass);
-@@ -708,6 +724,26 @@ interface_update_proto_addr(struct vlist_tree *tree,
+@@ -704,6 +720,26 @@ interface_update_proto_addr(struct vlist
  			}
  
  			if (!keep) {
@@ -80,7 +78,7 @@ index 37680001a9f1..1444fbfcdecf 100644
  				if (a_new->policy_table)
  					interface_add_addr_rules(a_new, true);
  			}
-@@ -1578,12 +1614,45 @@ void interface_ip_set_enabled(struct interface_ip_settings *ip, bool enabled)
+@@ -1554,12 +1590,45 @@ void interface_ip_set_enabled(struct int
  			if (iface->metric || addr->policy_table)
  				interface_handle_subnet_route(iface, addr, true);
  
