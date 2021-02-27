@@ -22,17 +22,17 @@ stages:
 build test intel_mips prpl webui:
   extends: .build test config
   variables:
-    CI_BUILD_CONFIG_EXTRA: +PACKAGE_prplmesh-dwpal
+    CI_BUILD_CONFIG_EXTRA: +PACKAGE_prplmesh
 
 build test ipq40xx prpl webui:
   extends: .build test config
   variables:
-    CI_BUILD_CONFIG_EXTRA: +PACKAGE_prplmesh-nl80211
+    CI_BUILD_CONFIG_EXTRA: +PACKAGE_prplmesh
 
 build test mvebu prpl webui:
   extends: .build test config
   variables:
-    CI_BUILD_CONFIG_EXTRA: +PACKAGE_prplmesh-nl80211
+    CI_BUILD_CONFIG_EXTRA: +PACKAGE_prplmesh
 
 run test NEC WX3000HP with system on NAND:
   dependencies:
