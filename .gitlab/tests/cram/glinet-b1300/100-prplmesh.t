@@ -41,25 +41,25 @@ Check that prplmesh processes are running:
 Check that prplmesh is operational:
 
   $ R logger -t cram "Check that prplmesh is operational"
-  $ R "/opt/prplmesh/scripts/prplmesh_utils.sh status" | sed -E 's/.*(\/opt\/prplmesh.*)/\1/'
-  /opt/prplmesh/scripts/prplmesh_utils.sh: status
-  /opt/prplmesh/bin/beerocks_controller
+  $ R "/opt/prplmesh/scripts/prplmesh_utils.sh status" | sed -E 's/.*(\/opt\/prplmesh.*)/\1/' | LC_ALL=C sort
+  \x1b[0m (esc)
+  \x1b[0m\x1b[1;32mOK Main radio agent operational (esc)
+  \x1b[1;32moperational test success! (esc)
   /opt/prplmesh/bin/beerocks_agent
+  /opt/prplmesh/bin/beerocks_controller
+  /opt/prplmesh/bin/beerocks_controller
   /opt/prplmesh/bin/beerocks_fronthaul
   /opt/prplmesh/bin/beerocks_fronthaul
   /opt/prplmesh/bin/ieee1905_transport
-  /opt/prplmesh/bin/beerocks_controller
+  /opt/prplmesh/scripts/prplmesh_utils.sh: status
+  OK INVALID radio agent operational
+  OK INVALID radio agent operational
   executing operational test using bml
-  \x1b[1;32moperational test success! (esc)
-  \x1b[0m\x1b[1;32mOK Main radio agent operational (esc)
-  OK INVALID radio agent operational
-  OK INVALID radio agent operational
-  \x1b[0m (no-eol) (esc)
 
 Check that prplmesh is in operational state:
 
   $ R logger -t cram "Check that prplmesh is in operational state"
-  $ R "/opt/prplmesh/bin/beerocks_cli -c bml_conn_map" | egrep '(wlan|OK)' | sed -E "s/.*: (wlan[0-9.]+) .*/\1/"
+  $ R "/opt/prplmesh/bin/beerocks_cli -c bml_conn_map" | egrep '(wlan|OK)' | sed -E "s/.*: (wlan[0-9.]+) .*/\1/" | LC_ALL=C sort
   bml_connect: return value is: BML_RET_OK, Success status
-  bml_nw_map_query: return value is: BML_RET_OK, Success status
   bml_disconnect: return value is: BML_RET_OK, Success status
+  bml_nw_map_query: return value is: BML_RET_OK, Success status
