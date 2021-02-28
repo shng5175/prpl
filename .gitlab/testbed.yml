@@ -24,7 +24,6 @@
     - ssh-keyscan $TESTBED_UART_RELAY_HOST > ~/.ssh/known_hosts 2> /dev/null
     - chmod 644 ~/.ssh/known_hosts
 
-    - cp "$TFTP_IMAGE_PATH/$TFTP_IMAGE_FILENAME" "$TESTBED_TFTP_PATH"
     - .gitlab/scripts/testbed-device.py --target $LABGRID_TARGET boot_into shell
     - >
       .gitlab/scripts/testbed-device.py
