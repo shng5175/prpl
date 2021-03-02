@@ -17,3 +17,5 @@ packages:
 
 diffconfig: |
           CONFIG_PACKAGE_rpcd-mod-luci=y
+          CONFIG_PACKAGE_ip-full=y
+          CONFIG_PACKAGE_ip-bridge=y
