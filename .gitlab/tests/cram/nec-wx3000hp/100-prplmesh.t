@@ -5,12 +5,12 @@ Create R alias:
 Start wireless:
 
   $ R logger -t cram "Start wireless"
-  $ R wifi up > /dev/null
-  $ sleep 60
+  $ R "uci set wireless.radio0.disabled='0'; uci set wireless.radio2.disabled='0'; uci commit; wifi up"
+  $ sleep 180
 
-Check that hostapd & supplicant proccess are up after reboot:
+Check that hostapd & supplicant proccess are up after wireless startup:
 
-  $ R logger -t cram "Check that hostapd \& supplicant proccess are up after reboot"
+  $ R logger -t cram "Check that hostapd \& supplicant proccess are up after wireless startup"
 
   $ R "ps w" | sed -nE 's/.*(\/usr\/sbin\/hostapd.*)/\1/p' | LC_ALL=C sort
   /usr/sbin/hostapd -s -P /var/run/wifi-phy0.pid -B /var/run/hostapd-phy0.conf
