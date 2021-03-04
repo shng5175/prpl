@@ -50,7 +50,7 @@ run test Gl.iNet B1300 with system on initramfs:
     LABGRID_TARGET: "$DUT_BOARD-initramfs"
     TFTP_IMAGE_FILENAME: openwrt-ipq40xx-generic-glinet_gl-b1300-initramfs-fit-uImage.itb
 
-run test Turris Omnia with system on initramfs:
+.run test Turris Omnia with system on initramfs:
   dependencies:
     - build test mvebu prpl webui
   extends: .turris-omnia testbed
