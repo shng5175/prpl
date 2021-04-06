@@ -29,6 +29,7 @@
       docker run "$CI_REGISTRY_IMAGE/$CI_DESIGNATED_BRANCH/$IMAGE_NAME:$CI_COMMIT_REF_SLUG" sh -c "
         cd /home/builder &&
         make defconfig &&
+        sed -i 's;https://git.openwrt.org;https://gitlab.com/openwrt;' feeds.conf.default &&
         ./scripts/feeds update base &&
         ./scripts/feeds install busybox &&
         sync && sleep 1 &&
