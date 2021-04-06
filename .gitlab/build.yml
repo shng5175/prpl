@@ -25,26 +25,6 @@
     - make -j $(nproc) tools/tar/compile || make -j1 V=s tools/tar/compile 2>&1 | tee --append logs/build.log
     - make -j $(nproc) download check FIXUP=1 || make -j1 V=s download check FIXUP=1 2>&1 | tee --append logs/build.log
 
-    - >
-      git diff-index --exit-code HEAD || {
-        ret=$?
-        echo "Package integrity issues, please check packages-hash-issues.patch from artifacts"
-        git diff > packages-hash-issues.patch
-        exit $ret
-      }
-
-    - >
-      topdir=$(pwd);
-      for feed in $(find feeds -name .git); do
-        pushd $(dirname $feed) > /dev/null; git diff-index --exit-code HEAD || {
-          ret=$?
-          echo "Feed $(dirname $feed) packages integrity issues, please check feed-packages-hash-issues.patch from artifacts"
-          git diff > $topdir/feed-packages-hash-issues.patch
-          exit $ret
-        }
-        popd > /dev/null
-      done
-
     - make -j $(nproc) || make -j1 V=s 2>&1 | tee --append logs/build.log
     - rm .build_failed
 
