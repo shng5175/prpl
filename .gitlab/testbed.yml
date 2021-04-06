@@ -1,9 +1,6 @@
 .testbed:
   stage: run
   image: "$CI_REGISTRY_IMAGE/testbed:latest"
-  rules:
-    - if: '$CI_COMMIT_BRANCH == "prplwrt"'
-    - when: manual
   variables:
     TESTBED_TFTP_PATH: /var/lib/tftpboot
     TFTP_IMAGE_PATH: bin/targets/$DUT_ARCH/$DUT_SUBTARGET

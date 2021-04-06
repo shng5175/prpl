@@ -6,9 +6,6 @@
   variables:
     CI_BUILD_CONFIG: >
       +DEVEL +BUILD_LOG +SDK
-  rules:
-    - if: '$CI_COMMIT_BRANCH == "prplwrt"'
-    - when: manual
   before_script:
     - touch .build_failed
 
