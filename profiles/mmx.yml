@@ -1,8 +1,8 @@
 feeds:
   - name: mmx
     uri: https://github.com/InangoSystems/feed-mmx.git
-    tracking_branch: master
-    revision: fde47470e0ac362b0220629e9908f051537dd79e
+    tracking_branch: entrypoint_index_support
+    revision: 8db51cda9cb04e5f0ce6e863c735f3cadae0e542
 
 packages:
   - luasocket
@@ -17,3 +17,5 @@ packages:
   - mmx-web
   - inango-prplmesh-en
   - prplmesh-be
+diffconfig: |
+  CONFIG_EP_MAX_METHOD_STR_LEN=512
