@@ -64,6 +64,4 @@ Check that prplmesh is in operational state:
   bml_disconnect: return value is: BML_RET_OK, Success status
   bml_nw_map_query: return value is: BML_RET_OK, Success status
   wlan0
-  wlan0.0
   wlan1
-  wlan1.0
