@@ -23,7 +23,7 @@ Check that hostapd & supplicant proccess are up after wireless startup:
 Restart prplmesh:
 
   $ R logger -t cram "Restart prplmesh"
-  $ R "/opt/prplmesh/scripts/prplmesh_utils.sh restart > /dev/null 2>&1 && sleep 180"
+  $ R "/etc/init.d/prplmesh gateway_mode > /dev/null 2>&1 && sleep 180"
 
 Check VAP setup:
 

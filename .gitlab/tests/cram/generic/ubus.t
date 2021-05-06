@@ -22,6 +22,7 @@ Check that ubus has all expected services available:
   network.interface.wan
   network.interface.wan6
   network.wireless
+  prplmesh
   rpc-sys
   service
   session

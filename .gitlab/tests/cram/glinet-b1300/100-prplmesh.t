@@ -18,7 +18,7 @@ Check that hostapd is operating after reboot:
 Restart prplmesh:
 
   $ R logger -t cram "Restart prplmesh"
-  $ R "/opt/prplmesh/scripts/prplmesh_utils.sh restart && sleep 5" > /dev/null 2>&1
+  $ R "/etc/init.d/prplmesh gateway_mode && sleep 5" > /dev/null 2>&1
   $ sleep 60
 
 Check VAP setup after restart:
