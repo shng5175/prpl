@@ -23,7 +23,7 @@ class BuildLogFailure:
 
 class OpenWrtSystemInfo:
     def __init__(self, filename):
-        with open(filename, "r") as read_file:
+        with open(filename, "r", errors="ignore") as read_file:
             self.data = json.load(read_file)
 
     @property
@@ -89,7 +89,7 @@ class RunLogAnalyzer:
         if not path:
             return
 
-        with open(self.logfile_path(kind)) as f:
+        with open(self.logfile_path(kind), errors="ignore") as f:
             return f.read()
 
     def logfile_path(self, kind):
@@ -111,7 +111,7 @@ class RunLogAnalyzer:
         fsize = os.stat(path).st_size
 
         n = 0
-        with open(path) as f:
+        with open(path, errors="ignore") as f:
             if bufsize > fsize:
                 bufsize = fsize - 1
 
@@ -183,7 +183,7 @@ class BuildLogAnalyzer:
                 return tail_log[truncate:]
             return tail_log
 
-        with open(path, "r") as fd:
+        with open(path, "r", errors="ignore") as fd:
             for line in fd:
                 line = line.rstrip()
                 if len(line) == 0:
@@ -243,7 +243,7 @@ class JiraHelper:
         cert_data = None
         args = self.args
 
-        with open(args.private_key, "r") as cert_file:
+        with open(args.private_key, "r", errors="ignore") as cert_file:
             cert_data = cert_file.read()
 
         oauth_dict = {
