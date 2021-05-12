@@ -1,13 +1,13 @@
 .build test config:
   stage: build
-  image: "$CI_REGISTRY_IMAGE/builder:latest"
+  image: "$CI_REGISTRY_IMAGE/$CI_DESIGNATED_BRANCH/builder:latest"
   tags:
     - firmware-builder
   variables:
     CI_BUILD_CONFIG: >
       +DEVEL +BUILD_LOG +SDK
   rules:
-    - if: '$CI_COMMIT_BRANCH == "prplwrt"'
+    - if: '$CI_COMMIT_BRANCH == $CI_DESIGNATED_BRANCH'
     - when: manual
   before_script:
     - touch .build_failed
@@ -53,7 +53,7 @@
 
   after_script:
     - >
-      [ "$CI_COMMIT_BRANCH" == 'prplwrt' ] && {
+      [ "$CI_COMMIT_BRANCH" = "$CI_DESIGNATED_BRANCH" ] && {
         test -f .build_failed && .gitlab/scripts/prpl-jira.py build_failure || true
       } || true
 
