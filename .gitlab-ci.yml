@@ -1,3 +1,6 @@
+variables:
+  CI_DESIGNATED_BRANCH: prplwrt
+
 include:
   - local: .gitlab/build.yml
   - local: .gitlab/docker.yml

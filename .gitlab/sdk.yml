@@ -1,3 +1,6 @@
+variables:
+  CI_DESIGNATED_BRANCH: prplwrt
+
 stages:
   - generate
   - build
@@ -90,7 +93,7 @@ stages:
       please-provide
     CI_SDK_PACKAGE_JOBS_TEMPLATE: |
       include:
-        - remote: https://gitlab.com/prpl-foundation/prplwrt/prplwrt/-/raw/prplwrt/.gitlab/sdk.yml
+        - remote: https://gitlab.com/prpl-foundation/prplwrt/prplwrt/-/raw/$CI_DESIGNATED_BRANCH/.gitlab/sdk.yml
       {% for sdk in env['CI_SDK_TARGETS'].rstrip().split("\n") %}
         {% for package in env['CI_SDK_BUILD_PACKAGES'].rstrip().split("\n") %}
       build {{ package | trim }} with {{ sdk | trim }} SDK:
@@ -140,18 +143,18 @@ stages:
 .build feed with intel_mips-xrx500 SDK:
   extends: .build feed with SDK
   variables:
-    CI_SDK_IMAGE: registry.gitlab.com/prpl-foundation/prplwrt/prplwrt/sdk-intel_mips-xrx500:latest
+    CI_SDK_IMAGE: registry.gitlab.com/prpl-foundation/prplwrt/prplwrt/$CI_DESIGNATED_BRANCH/sdk-intel_mips-xrx500:latest
     CI_SDK_INSTALL_FEEDS: base packages luci routing feed_intel
 
 .build feed with ipq40xx-generic SDK:
   extends: .build feed with SDK
   variables:
-    CI_SDK_IMAGE: registry.gitlab.com/prpl-foundation/prplwrt/prplwrt/sdk-ipq40xx-generic:latest
+    CI_SDK_IMAGE: registry.gitlab.com/prpl-foundation/prplwrt/prplwrt/$CI_DESIGNATED_BRANCH/sdk-ipq40xx-generic:latest
 
 .build feed with mvebu-cortexa9 SDK:
   extends: .build feed with SDK
   variables:
-    CI_SDK_IMAGE: registry.gitlab.com/prpl-foundation/prplwrt/prplwrt/sdk-mvebu-cortexa9:latest
+    CI_SDK_IMAGE: registry.gitlab.com/prpl-foundation/prplwrt/prplwrt/$CI_DESIGNATED_BRANCH/sdk-mvebu-cortexa9:latest
 
 .build feed with ath79-generic-19.07.7 SDK:
   extends: .build feed with OpenWrt SDK
