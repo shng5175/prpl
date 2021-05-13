@@ -1,5 +1,5 @@
 variables:
-  CI_DESIGNATED_BRANCH: prplwrt
+  CI_DESIGNATED_BRANCH: prplwrt-19.07
 
 include:
   - local: .gitlab/build.yml
