@@ -1,4 +1,5 @@
-FROM registry.gitlab.com/prpl-foundation/prplwrt/prplwrt/builder:latest
+ARG DESIGNATED_BRANCH=prplwrt
+FROM registry.gitlab.com/prpl-foundation/prplwrt/prplwrt/$DESIGNATED_BRANCH/builder:latest
 
 COPY --chown=builder:builder . /home/builder/
 
