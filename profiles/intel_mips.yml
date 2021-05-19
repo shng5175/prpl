@@ -11,8 +11,8 @@ description: Build images for the Intel MIPS devices - Netgear RAX40, AxePoint a
 feeds:
   - name: feed_intel
     uri: https://gitlab.com/prpl-foundation/prplwrt/feed-intel.git
-    tracking_branch: ugw-8.4.2-cleanup
-    revision: 72e773fefec6f6bf8422ef6853c14e371e1ed452
+    tracking_branch: prplwrt-19.07
+    revision: ce97ca3bf471508b6e97dc0c819729d314c51b71
 
 packages:
   - dwpal_6x-uci
