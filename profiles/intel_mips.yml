@@ -12,7 +12,7 @@ feeds:
   - name: feed_intel
     uri: https://gitlab.com/prpl-foundation/prplwrt/feed-intel.git
     tracking_branch: prplwrt-19.07
-    revision: prplwrt-v1.1-rc1
+    revision: prplwrt-v1.1-rc2
 
 packages:
   - dwpal_6x-uci
