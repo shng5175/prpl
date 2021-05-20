@@ -39,7 +39,8 @@ ENV LANG=en_US.utf8
 RUN pip3 install -U pip
 RUN pip3 install \
 	jira \
-	pyyaml
+	pyyaml \
+	pyjwt
 
 RUN \
     echo '%sudo ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers && \
