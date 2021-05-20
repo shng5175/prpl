@@ -36,7 +36,8 @@ RUN \
 
 RUN pip3 install \
 	cram \
-	jira
+	jira \
+	pyjwt
 
 RUN \
     echo '%sudo ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers && \
