@@ -14,3 +14,6 @@ packages:
   - umdns
   - bbfd
   - prplmesh
+
+diffconfig: |
+          CONFIG_PACKAGE_rpcd-mod-luci=y
