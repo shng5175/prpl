@@ -52,8 +52,8 @@ Check that prplmesh is operational:
   /opt/prplmesh/bin/beerocks_fronthaul
   /opt/prplmesh/bin/ieee1905_transport
   /opt/prplmesh/scripts/prplmesh_utils.sh: status
-  OK INVALID radio agent operational
-  OK INVALID radio agent operational
+  OK wlan0 radio agent operational
+  OK wlan1 radio agent operational
   executing operational test using bml
 
 Check that prplmesh is in operational state:
@@ -63,3 +63,5 @@ Check that prplmesh is in operational state:
   bml_connect: return value is: BML_RET_OK, Success status
   bml_disconnect: return value is: BML_RET_OK, Success status
   bml_nw_map_query: return value is: BML_RET_OK, Success status
+  wlan0
+  wlan1
