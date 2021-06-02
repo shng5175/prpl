@@ -1,8 +1,8 @@
 feeds:
-  - name: sah
-    uri: https://gitlab.com/soft.at.home/buildsystems/openwrt/sah-packages.git
+  - name: ambiorix
+    uri: https://gitlab.com/soft.at.home/buildsystems/openwrt/feed_amx.git
     tracking_branch: master
-    revision: 553475f301edad072ac0cfeb11d1abe32569fe7d
+    revision: b6c4b87e3faa50dec714498717a29f8b8392609d
 
 packages:
   - libamxb
@@ -13,5 +13,5 @@ packages:
   - libamxp
   - uriparser
   - yajl
-  - amxb-ubus
+  - mod-amxb-ubus
   - amxo-cg
