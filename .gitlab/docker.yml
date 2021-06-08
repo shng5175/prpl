@@ -4,10 +4,6 @@
   image: docker:19.03.7
   services:
     - docker:19.03.7-dind
-  rules:
-    - if: '$CI_COMMIT_BRANCH == $CI_DESIGNATED_BRANCH'
-    - when: manual
-      allow_failure: true
   variables:
     DOCKER_DRIVER: overlay2
     DOCKER_TLS_CERTDIR: "/certs"
