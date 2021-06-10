@@ -39,7 +39,7 @@ run test NEC WX3000HP with system on NAND:
     LABGRID_TARGET: "$DUT_BOARD-nand"
     TFTP_IMAGE_FILENAME: AX3000_1600_ETH_11AXUCI_ASURADA-squashfs-fullimage.img
 
-run test Gl.iNet B1300 with system on initramfs:
+.run test Gl.iNet B1300 with system on initramfs:
   dependencies:
     - build test ipq40xx prpl webui
   extends: .glinet-b1300 testbed
