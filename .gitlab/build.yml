@@ -8,6 +8,8 @@
       +DEVEL +BUILD_LOG +SDK
   rules:
     - if: '$CI_COMMIT_BRANCH == $CI_DESIGNATED_BRANCH'
+    - if: '$CI_PIPELINE_SOURCE == "schedule"'
+      when: never
     - when: manual
   before_script:
     - touch .build_failed

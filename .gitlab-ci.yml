@@ -3,6 +3,7 @@ variables:
 
 include:
   - local: .gitlab/build.yml
+  - local: .gitlab/coverity.yml
   - local: .gitlab/docker.yml
   - local: .gitlab/docker/builder/gitlab.yml
   - local: .gitlab/docker/testbed/gitlab.yml
@@ -21,6 +22,7 @@ stages:
   - docker SDK test
   - docker SDK deploy
   - run
+  - coverity
 
 build test intel_mips prpl webui:
   extends: .build test config
@@ -30,6 +32,13 @@ build test ipq40xx prpl webui:
 
 build test mvebu prpl webui:
   extends: .build test config
+
+coverity scan ipq40xx prpl webui:
+  extends: .coverity scan config
+  variables:
+    CI_COVERITY_COMPILER_TEMPLATE_LIST: >
+      arm-openwrt-linux-gcc
+      arm-openwrt-linux-muslgnueabi-gcc
 
 run test NEC WX3000HP with system on NAND:
   dependencies:
