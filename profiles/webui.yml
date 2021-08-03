@@ -4,7 +4,7 @@ feeds:
   - name: feed_prpl
     uri: https://gitlab.com/prpl-foundation/prplwrt/feed-prpl.git
     tracking_branch: prplwrt-19.07
-    revision: prplwrt-v1.1
+    revision: cf2e9ccea87e41031ffdb9582329877034713ca1
 
 packages:
   - luci-mod-simple
