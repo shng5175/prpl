@@ -39,7 +39,7 @@ build test netgear-rax40 prpl webui:
   extends: .build test config
 ```
 
-Which is going to build test prplwrt with `netgear-rax40`, `prpl` and `webui` profiles.
+Which is going to build test prplOS with `netgear-rax40`, `prpl` and `webui` profiles.
 
 Description of CI variables:
 
@@ -73,7 +73,7 @@ Supported devices:
 
 ## sdk.yml
 
-Provides support for the [OpenWrt SDK](https://openwrt.org/docs/guide-developer/using_the_sdk) utilizing the [Docker SDK container](https://gitlab.com/prpl-foundation/prplwrt/prplwrt/-/tree/prplwrt/.gitlab/docker/sdk) under the hood.
+Provides support for the [OpenWrt SDK](https://openwrt.org/docs/guide-developer/using_the_sdk) utilizing the [Docker SDK container](https://gitlab.com/prpl-foundation/prplOS/prplos/-/tree/prplos/.gitlab/docker/sdk) under the hood.
 
 ### .build feed with SDK
 
@@ -83,7 +83,7 @@ Example usage, build testing of [safec3](https://gitlab.com/prpl-foundation/inte
 
 ```yaml
 include:
-  - remote: https://gitlab.com/prpl-foundation/prplwrt/prplwrt/-/raw/prplwrt/.gitlab/sdk.yml
+  - remote: https://gitlab.com/prpl-foundation/prplOS/prplos/-/raw/prplos/.gitlab/sdk.yml
 
 build:
   extends: .build feed with SDK

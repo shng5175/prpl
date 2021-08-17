@@ -1,5 +1,5 @@
-ARG DESIGNATED_BRANCH=prplwrt
-FROM registry.gitlab.com/prpl-foundation/prplwrt/prplwrt/$DESIGNATED_BRANCH/builder:latest
+ARG DESIGNATED_BRANCH=prplwrt-19.07
+FROM registry.gitlab.com/prpl-foundation/prplos/prplos/$DESIGNATED_BRANCH/builder:latest
 
 COPY --chown=builder:builder . /home/builder/
 
