@@ -34,7 +34,7 @@ Check that ubus has all expected services available:
 Check that we've correct hostname and release info:
 
   $ R "ubus -S call system board | jsonfilter -e '@.hostname' -e '@.release.distribution'"
-  prplWrt
+  prplOS
   OpenWrt
 
 Check that log service is running:
