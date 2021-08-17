@@ -2,8 +2,8 @@
 description: Add the prpl WebUI
 feeds:
   - name: feed_prpl
-    uri: https://gitlab.com/prpl-foundation/prplwrt/feed-prpl.git
-    tracking_branch: prplwrt
+    uri: https://gitlab.com/prpl-foundation/prplOS/feed-prpl.git
+    tracking_branch: prplos
     revision: 7f5e26b375ae7cb5d3aedb2b9b508adb22dd841b
 
 packages:
