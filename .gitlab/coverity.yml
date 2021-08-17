@@ -38,7 +38,7 @@
       umdns
       usign
       ustream-ssl
-    CI_COVERITY_PRPLWRT_PACKAGE_LIST: >
+    CI_COVERITY_PRPLOS_PACKAGE_LIST: >
       bbfd
       obuspa
       owsd
@@ -78,7 +78,7 @@
     - make -j $(nproc) download check FIXUP=1 || make -j1 V=s download check FIXUP=1 2>&1 | tee --append logs/build.log
     - make -j $(nproc) || make -j1 V=s 2>&1 | tee --append logs/build.log
 
-    - printf -v clean_packages "package/%s/clean " ${CI_COVERITY_OPENWRT_PACKAGE_LIST[@]} ${CI_COVERITY_PRPLWRT_PACKAGE_LIST[@]}
+    - printf -v clean_packages "package/%s/clean " ${CI_COVERITY_OPENWRT_PACKAGE_LIST[@]} ${CI_COVERITY_PRPLOS_PACKAGE_LIST[@]}
     - make $clean_packages
 
     - printf -v force_compile_packages "package/%s/compile " ${CI_COVERITY_FORCE_COMPILE_PACKAGE_LIST[@]}
@@ -97,7 +97,7 @@
       TESTBED_SSH_PRIVATE_KEY
       COVERITY_PROJECT_TOKEN
 
-    - printf -v compile_packages "package/%s/compile " ${CI_COVERITY_OPENWRT_PACKAGE_LIST[@]} ${CI_COVERITY_PRPLWRT_PACKAGE_LIST[@]}
+    - printf -v compile_packages "package/%s/compile " ${CI_COVERITY_OPENWRT_PACKAGE_LIST[@]} ${CI_COVERITY_PRPLOS_PACKAGE_LIST[@]}
     - cov-build --dir cov-int make -j $(nproc) $compile_packages
 
     - tar czf cov-int.tar.gz ./cov-int
