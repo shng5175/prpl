@@ -1,5 +1,5 @@
 ARG DESIGNATED_BRANCH=prplos
-FROM registry.gitlab.com/prpl-foundation/prplOS/prplos/$DESIGNATED_BRANCH/builder:latest
+FROM registry.gitlab.com/prpl-foundation/prplos/prplos/$DESIGNATED_BRANCH/builder:latest
 
 COPY --chown=builder:builder . /home/builder/
 
