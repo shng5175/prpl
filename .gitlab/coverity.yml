@@ -3,6 +3,7 @@
   image: "$CI_REGISTRY_IMAGE/$CI_DESIGNATED_BRANCH/builder:latest"
   tags:
     - firmware-builder
+  dependencies: []
   variables:
     CI_BUILD_CONFIG: >
       +DEVEL +BUILD_LOG +ALL +ALL_KMODS +ALL_NONSHARED
