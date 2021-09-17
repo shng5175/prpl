@@ -4,7 +4,7 @@ feeds:
   - name: feed_prpl
     uri: https://gitlab.com/prpl-foundation/prplOS/feed-prpl.git
     tracking_branch: prplos
-    revision: 1ecb27839aa69ee30fe5604b8df59838774fe34c
+    revision: 7f5e26b375ae7cb5d3aedb2b9b508adb22dd841b
 
 packages:
   - obuspa
@@ -14,7 +14,6 @@ packages:
   - umdns
   - bbfd
   - prplmesh
-  - wan-manager
 
 diffconfig: |
           CONFIG_PACKAGE_rpcd-mod-luci=y
