@@ -7,13 +7,33 @@ feeds:
     revision: 661e7e6297980876c18393d42f5556cfdf86e803
 
 packages:
+  - amx-cli
+  - bbfd
+  - deviceinfo-manager
+  - dhcpv4-manager
+  - dhcpv6s-manager
+  - ip-manager
+  - libdhcpoptions
+  - libfwinterface
+  - libfwrules
+  - libnetmodel
+  - mod-amxb-ubus
+  - mod-ba-cli
+  - mod-dmext
+  - netdev-plugin
+  - netmodel
   - obuspa
   - owsd
+  - prplmesh
+  - routing-manager
+  - time-manager
+  - tr181-bridging
+  - tr181-device
+  - tr181-firewall
   - u80211d
   - ucwmp
   - umdns
-  - bbfd
-  - prplmesh
+  - wan-manager
 
 diffconfig: |
           CONFIG_PACKAGE_rpcd-mod-luci=y
