@@ -8,3 +8,6 @@ Check that we've correct system info:
   ARMv7 Processor rev 1 (v7l)
   Turris Omnia
   cznic,turris-omnia
+
+  $ R "ubus call DeviceInfo _get | jsonfilter -e '@[\"DeviceInfo.\"].ProductClass'"
+  Turris Omnia

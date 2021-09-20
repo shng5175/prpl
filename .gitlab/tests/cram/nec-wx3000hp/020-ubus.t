@@ -8,3 +8,6 @@ Check that we've correct system info:
   GRX500 rev 1.2
   EASY350 ANYWAN (GRX350) Main model
   EASY350 ANYWAN (GRX350) Main model
+
+  $ R "ubus call DeviceInfo _get | jsonfilter -e '@[\"DeviceInfo.\"].ProductClass'"
+  EASY350 ANYWAN (GRX350) Main model
