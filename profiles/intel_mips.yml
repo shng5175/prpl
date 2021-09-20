@@ -1,8 +1,5 @@
 ---
 profiles:
-  - NETGEAR_RAX40
-  - AX6000_2000_ETH_11AXUCI
-  - AX3000_1600_ETH_11AXUCI
   - AX3000_1600_ETH_11AXUCI_ASURADA
 target: intel_mips
 subtarget: xrx500
@@ -78,12 +75,7 @@ packages:
   - ltq-gphy-fw-xrx500
   - ltq-wlan-wave_6x-uci
   - nand-utils
-  - ppacmd
-  - safeclibs3
-  - switch_cli_ugw8
-  - swpal_6x-uci
-  - terminfo
-  - uuidgen
+  - ubi-utils
 
 diffconfig: |
   CONFIG_DEVEL=y
