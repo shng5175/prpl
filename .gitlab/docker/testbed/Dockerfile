@@ -6,6 +6,7 @@ RUN \
     apt-get update && \
     apt-get install --yes --no-install-recommends \
 	curl \
+	etherwake \
 	git-core \
 	iputils-ping \
 	iproute2 \
@@ -35,8 +36,11 @@ RUN \
 	python3 setup.py install
 
 RUN pip3 install \
+	cdrouter \
 	cram \
+	humanize \
 	jira \
+	'marshmallow<3.0.0' \
 	pyjwt
 
 RUN \
