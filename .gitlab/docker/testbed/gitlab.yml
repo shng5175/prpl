@@ -13,7 +13,7 @@ test Docker image testbed:
     - docker pull "$CI_REGISTRY_IMAGE/$CI_DESIGNATED_BRANCH/$IMAGE_NAME:$CI_COMMIT_REF_SLUG"
     - >
       docker run --rm "$CI_REGISTRY_IMAGE/$CI_DESIGNATED_BRANCH/$IMAGE_NAME:$CI_COMMIT_REF_SLUG" sh -c "
-      python3 -c 'import labgrid; import yaml; import jira; import jwt'
+      python3 -c 'import labgrid; import yaml; import jira; import jwt; import cdrouter'
       "
 
 deploy Docker image testbed:
