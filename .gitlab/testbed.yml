@@ -44,6 +44,12 @@
     - rm .run_failed
 
   after_script:
+    - >
+      [ "$TMATE_ENABLE_SHELL" = "YES" ] && {
+        echo "Starting tmate session..."
+        tmate -n "${TMATE_SESSION_TOKEN}-$CI_JOB_ID" -k "$TMATE_API_KEY" -F new "ssh root@$TARGET_LAN_IP" > /tmp/tmate-session.log 2>&1
+      }
+
     - eval $(ssh-agent -s)
     - echo "$TESTBED_SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
     - mkdir -p ~/.ssh; chmod 700 ~/.ssh
