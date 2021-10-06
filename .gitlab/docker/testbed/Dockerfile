@@ -16,7 +16,8 @@ RUN \
 	python3 \
 	python3-pip \
 	python3-setuptools \
-	sudo && \
+	sudo \
+	xz-utils && \
     apt-get -y autoremove && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
