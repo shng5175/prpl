@@ -24,6 +24,7 @@ packages:
   - mod-dmext
   - mod-dmstats
   - mod-vlan-ioctl
+  - mod-sahtrace
   - netdev-plugin
   - netmodel
   - obuspa
