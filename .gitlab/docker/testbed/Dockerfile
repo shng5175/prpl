@@ -29,11 +29,11 @@ RUN git clone --branch wip/testbed https://gitlab.com/prpl-foundation/prplOS/lab
 WORKDIR labgrid
 RUN git reset --hard $LABGRID_COMMIT
 
-RUN pip3 install -U pip
-
 RUN \
+	pip3 install -U pip && \
 	pip3 install -r requirements.txt && \
-	python3 setup.py install
+	python3 setup.py install && \
+	rm -fr /labgrid
 
 RUN pip3 install \
 	cdrouter \
