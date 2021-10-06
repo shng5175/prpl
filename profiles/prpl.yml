@@ -4,14 +4,16 @@ feeds:
   - name: feed_prpl
     uri: https://gitlab.com/prpl-foundation/prplOS/feed-prpl.git
     tracking_branch: prplos
-    revision: 661e7e6297980876c18393d42f5556cfdf86e803
+    revision: 31bca0875888f3466f86ffae03b85e646eff75f9
 
 packages:
+  - acl-manager
   - amx-cli
   - bbfd
   - deviceinfo-manager
   - dhcpv4-manager
   - dhcpv6s-manager
+  - ethernet-manager
   - ip-manager
   - libdhcpoptions
   - libfwinterface
@@ -20,6 +22,8 @@ packages:
   - mod-amxb-ubus
   - mod-ba-cli
   - mod-dmext
+  - mod-dmstats
+  - mod-vlan-ioctl
   - netdev-plugin
   - netmodel
   - obuspa
@@ -29,7 +33,9 @@ packages:
   - time-manager
   - tr181-bridging
   - tr181-device
+  - tr181-dhcpv6client
   - tr181-firewall
+  - tr181-usermanagement
   - u80211d
   - ucwmp
   - umdns
