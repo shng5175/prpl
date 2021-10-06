@@ -40,11 +40,13 @@
       usign
       ustream-ssl
     CI_COVERITY_PRPLOS_PACKAGE_LIST: >
+      acl-manager
       amx-cli
       bbfd
       deviceinfo-manager
       dhcpv4-manager
       dhcpv6s-manager
+      ethernet-manager
       ip-manager
       libdhcpoptions
       libfwinterface
@@ -53,7 +55,9 @@
       mod-amxb-ubus
       mod-ba-cli
       mod-dmext
+      mod-dmstats
       mod-sahtrace
+      mod-vlan-ioctl
       netdev-plugin
       netmodel
       obuspa
@@ -63,7 +67,9 @@
       time-manager
       tr181-bridging
       tr181-device
+      tr181-dhcpv6client
       tr181-firewall
+      tr181-usermanagement
       ucwmp
       umdns
       wan-manager
