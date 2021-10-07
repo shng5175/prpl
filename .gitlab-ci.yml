@@ -3,7 +3,6 @@ variables:
 
 include:
   - local: .gitlab/build.yml
-  - local: .gitlab/cdrouter.yml
   - local: .gitlab/coverity.yml
   - local: .gitlab/docker.yml
   - local: .gitlab/docker/builder/gitlab.yml
@@ -23,7 +22,6 @@ stages:
   - docker SDK test
   - docker SDK deploy
   - run
-  - cdrouter
   - coverity
 
 build test intel_mips prpl webui:
@@ -56,26 +54,3 @@ run test Turris Omnia with system on initramfs:
   dependencies:
     - build test mvebu prpl webui
   extends: .turris-omnia testbed
-
-CDRouter simple-arp-tests package on NEC WX3000HP with system on NAND:
-  dependencies:
-    - build test intel_mips prpl webui
-  extends:
-    - .nec-wx3000hp testbed
-    - .cdrouter
-  variables:
-    LABGRID_TARGET: "$DUT_BOARD-firstboot"
-
-CDRouter simple-arp-tests package on Gl.iNet B1300 with system on initramfs:
-  dependencies:
-    - build test ipq40xx prpl webui
-  extends:
-    - .glinet-b1300 testbed
-    - .cdrouter
-
-CDRouter simple-arp-tests package on Turris Omnia with system on initramfs:
-  dependencies:
-    - build test mvebu prpl webui
-  extends:
-    - .turris-omnia testbed
-    - .cdrouter
