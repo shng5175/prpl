@@ -96,6 +96,7 @@ Description of CI variables:
 
  * CI_SDK_INSTALL_FEEDS - list of feeds which should be installed prior to building packages.
  * CI_SDK_BUILD_PACKAGES - list of packages which should be compile tested.
+ * CI_SDK_BUILD_PARALLEL - max number of threads to use for make (defaults to `nproc` if unset).
 
 ### .generate SDK package build jobs
 
