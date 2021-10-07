@@ -71,7 +71,7 @@ stages:
 
     - >
       for package in $CI_SDK_BUILD_PACKAGES; do
-        make -j $(nproc) package/$package/compile || make -j1 package/$package/{clean,compile} V=sc || exit 1 ;
+        make -j ${CI_SDK_BUILD_PARALLEL:-$(nproc)} package/$package/compile || make -j1 package/$package/{clean,compile} V=sc || exit 1 ;
       done 2>&1 | tee --append logs/build.log
 
   after_script:
