@@ -39,6 +39,8 @@ Check that ubus has expected datamodels available:
   DHCPv4
   DHCPv4.Server
   DHCPv4.Server.Pool
+  DHCPv4c
+  DHCPv4c.Client
   DHCPv6
   DHCPv6.Client
   DHCPv6.Server
@@ -132,12 +134,14 @@ Check that we've correct DHCP pool settings:
 Check that we've expected firewall rules:
   $ R "ubus call Firewall _get \"{'rel_path':'X_Prpl_Service.'}\" | jsonfilter -e @[*].Alias -e @[*].Protocol -e @[*].DestinationPort | grep -v '^$' | sort"
   123
+  17
   22
   53
   546
   547
   6,17
   67
+  68
   80,443
   ICMP
   IGMP
@@ -149,6 +153,7 @@ Check that we've expected firewall rules:
   UDP
   UDP,TCP
   cpe-Time-br-lan
+  cpe-dhcpv4c-wan
   dhcp-server
   dhcpv6-client
   dhcpv6-server
