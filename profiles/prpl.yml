@@ -4,12 +4,13 @@ feeds:
   - name: feed_prpl
     uri: https://gitlab.com/prpl-foundation/prplOS/feed-prpl.git
     tracking_branch: prplos
-    revision: 2822d1174c6d0703413115f2d00907baa2f54c40
+    revision: 3cc242b783e6b78d959af8f3f2ec3cd182b171d4
 
 packages:
   - acl-manager
   - amx-cli
   - bbfd
+  - chrony
   - deviceinfo-manager
   - dhcpv4-manager
   - dhcpv6s-manager
@@ -32,6 +33,7 @@ packages:
   - pcm-manager
   - prplmesh
   - routing-manager
+  - syslog-ng
   - time-manager
   - tr181-bridging
   - tr181-device
@@ -48,3 +50,4 @@ diffconfig: |
           CONFIG_PACKAGE_rpcd-mod-luci=y
           CONFIG_PACKAGE_ip-full=y
           CONFIG_PACKAGE_ip-bridge=y
+          # CONFIG_PACKAGE_logd is not set
