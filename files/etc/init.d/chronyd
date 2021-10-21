@@ -1,0 +1,24 @@
+#!/bin/sh                                                                                                                                                                                                           
+publish_uci(){
+      servers=$(uci show $1)
+        echo "$servers" | IFS='=' read -r array
+	A="$(echo $servers | cut -d'=' -f2)"
+	param=$(echo $A | tr -d \') 	
+	
+
+        param2=$(echo 'ubus call Time update_uci '\''{"param":"'$1'","value":"'${param}'"}'\')
+	#echo $param2
+        eval $param2
+
+}
+case $1 in
+    start|reload)
+        publish_uci system.ntp.server
+        publish_uci system.ntp.enable_server
+        publish_uci system.ntp.enabled
+
+        ;;
+    *)
+        echo  "Usage: /etc/init.d/chrony {start|reload}"
+       ;;
+esac

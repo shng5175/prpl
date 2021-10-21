@@ -1,0 +1,26 @@
+/**
+ * Example of a configuration for a second 'guest' DHCPv4 Pool
+ * Not functional until the necessary IP.Interface also exists
+ *
+ * @version 1.0
+ */
+
+%populate {
+    object 'DHCPv4' {
+        object 'Server' {
+            parameter 'Enable' = true;
+            object 'Pool' {
+                instance add('guest') {
+                    parameter 'Interface' = "IP.Interface.4.";
+                    parameter 'LeaseTime' = 43200;
+                    parameter 'DNSServers' = "192.168.2.1";
+                    parameter 'Enable' = true;
+                    parameter 'IPRouters' = "192.168.2.1";
+                    parameter 'SubnetMask' = "255.255.255.0";
+                    parameter 'MinAddress' = "192.168.2.100";
+                    parameter 'MaxAddress' = "192.168.2.249";
+                }
+            }
+        }
+    }
+}

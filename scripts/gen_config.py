@@ -124,10 +124,13 @@ if run(["./scripts/feeds", "setup", *feeds]).returncode:
 if run(["./scripts/feeds", "update"]).returncode:
     die(f"Error updating feeds")
 
-for p in profile.get("feeds", []):
-    f = profile["feeds"].get(p)
-    if run(["./scripts/feeds", "install", "-a", "-f", "-p", f.get("name")]).returncode:
-        die(f"Error installing {feed}")
+# for p in profile.get("feeds", []):
+#     f = profile["feeds"].get(p)
+#     if run(["./scripts/feeds", "install", "-a", "-f", "-p", f.get("name")]).returncode:
+#         die(f"Error installing {feed}")
+
+if run(["./scripts/feeds", "install", "-a"]).returncode:
+    die(f"Error installing feeds")
 
 if profile.get("external_target", False):
     if run(["./scripts/feeds", "install", profile["target"]]).returncode:
