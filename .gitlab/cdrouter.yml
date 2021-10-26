@@ -23,7 +23,7 @@
     - ssh-keyscan $TESTBED_UART_RELAY_HOST > ~/.ssh/known_hosts 2> /dev/null
     - chmod 644 ~/.ssh/known_hosts
 
-    - cp "$TFTP_IMAGE_PATH/$TFTP_IMAGE_FILENAME" "$TESTBED_TFTP_PATH"
+    - curl https://gitlab.com/prpl-foundation/prplos/prplos/-/jobs/1748401912/artifacts/raw/bin/targets/ipq40xx/generic/openwrt-ipq40xx-generic-glinet_gl-b1300-initramfs-fit-uImage.itb > "$TESTBED_TFTP_PATH/$TFTP_IMAGE_FILENAME"
     - .gitlab/scripts/testbed-device.py --target $LABGRID_TARGET boot_into shell
     - sudo ip link set $TESTBED_WAN_INTERFACE down 2> /dev/null
     - >

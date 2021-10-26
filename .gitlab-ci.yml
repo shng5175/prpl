@@ -2,27 +2,18 @@ variables:
   CI_DESIGNATED_BRANCH: prplos
 
 include:
-  - local: .gitlab/build.yml
   - local: .gitlab/cdrouter.yml
   - local: .gitlab/testbed.yml
   - local: .gitlab/testbed/glinet-b1300.yml
 
 stages:
-  - build
   - run
   - cdrouter
 
-build test ipq40xx prpl webui:
-  extends: .build test config
-
 run test Gl.iNet B1300 with system on initramfs:
-  dependencies:
-    - build test ipq40xx prpl webui
   extends: .glinet-b1300 testbed
 
 CDRouter simple-arp-tests package on Gl.iNet B1300 with system on initramfs:
-  dependencies:
-    - build test ipq40xx prpl webui
   extends:
     - .glinet-b1300 testbed
     - .cdrouter
