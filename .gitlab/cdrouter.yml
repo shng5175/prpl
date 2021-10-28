@@ -54,13 +54,14 @@
       --device generic
       --configuration $TEST_CONFIG
       --system-info system-$LABGRID_TARGET.json
+
+  after_script:
     - >
       test -f *-logdir.tgz &&
       mkdir -p cdrouter-results &&
       tar xf *-logdir.tgz --strip-components=1 --directory=cdrouter-results &&
       cat cdrouter-results/final.txt
 
-  after_script:
     - eval $(ssh-agent -s)
     - echo "$TESTBED_SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
     - mkdir -p ~/.ssh; chmod 700 ~/.ssh
