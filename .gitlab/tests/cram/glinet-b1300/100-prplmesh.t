@@ -5,7 +5,7 @@ Create R alias:
 Start wireless:
 
   $ R logger -t cram "Start wireless"
-  $ R "uci set wireless.radio0.disabled='0'; uci set wireless.radio1.disabled='0'; uci commit; wifi up"
+  $ R "uci set wireless.wlan0.disabled='0'; uci set wireless.wlan1.disabled='0'; uci commit; wifi up"
   $ sleep 30
 
 Check that hostapd is operating after reboot:
@@ -25,8 +25,10 @@ Check VAP setup after restart:
 
   $ R logger -t cram "Check VAP setup after restart"
   $ R "iwinfo | grep ESSID"
-  wlan0     ESSID: "OpenWrt"
-  wlan1     ESSID: "OpenWrt"
+  wlan0     ESSID: "PrplOs"
+  wlan0-1   ESSID: "PrplOs-guest"
+  wlan1     ESSID: "PrplOs"
+  wlan1-1   ESSID: "PrplOs-guest"
 
 Check that prplmesh processes are running:
 
@@ -65,5 +67,7 @@ Check that prplmesh is in operational state:
   bml_nw_map_query: return value is: BML_RET_OK, Success status
   wlan0
   wlan0.0
+  wlan0.1
   wlan1
   wlan1.0
+  wlan1.1
