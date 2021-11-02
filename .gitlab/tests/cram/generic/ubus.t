@@ -4,7 +4,7 @@ Create R alias:
 
 Check that ubus has all expected services available:
 
-  $ R ubus list | grep -v dhcp_event
+  $ R "ubus list | grep -v '^[[:upper:]]'"
   bbfd
   bbfd.raw
   dhcp
@@ -17,6 +17,7 @@ Check that ubus has all expected services available:
   network
   network.device
   network.interface
+  network.interface.guest
   network.interface.lan
   network.interface.loopback
   network.interface.wan
