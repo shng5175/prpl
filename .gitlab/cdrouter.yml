@@ -39,6 +39,15 @@
       --network lan
       --remote-host $TARGET_LAN_TEST_HOST
 
+    - >
+      retry_count=3;
+      while [ $retry_count -gt 0 ]; do
+        echo "Waiting for SSH availability on $TARGET_LAN_IP"
+        ssh-keyscan "$TARGET_LAN_IP" 2>&1 | grep -q "$TARGET_LAN_IP" && break
+        retry_count="$(( retry_count - 1 ))"
+        sleep 5
+      done
+
     - ssh-keyscan $TARGET_LAN_IP >> ~/.ssh/known_hosts 2> /dev/null
     - ssh root@$TARGET_LAN_IP logread > logread-$LABGRID_TARGET.txt
     - ssh root@$TARGET_LAN_IP "uci set system.@system[0].log_size='512'; uci commit system; /etc/init.d/log restart"
