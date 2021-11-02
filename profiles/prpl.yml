@@ -47,6 +47,13 @@ packages:
   - bbfd
   - prplmesh
   - wan-manager
+  - libip4tc
+  - libip6tc
+  - libxtables
+  - kmod-ipt-core
+  - kmod-ipt-conntrack
+  - kmod-nf-conntrack6
+  - kmod-ipt-nat
 
 diffconfig: |
           CONFIG_PACKAGE_rpcd-mod-luci=y
