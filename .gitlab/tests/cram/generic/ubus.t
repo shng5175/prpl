@@ -34,6 +34,8 @@ Check that ubus has all expected services available:
 Check that ubus has expected datamodels available:
 
   $ R "ubus list | grep '[[:upper:]]' | grep -v '\.[[:digit:]]'"
+  ACLManager
+  ACLManager.Role
   Bridging
   Bridging.Bridge
   DHCPv4
@@ -58,6 +60,7 @@ Check that ubus has expected datamodels available:
   Ethernet
   Ethernet.Interface
   Ethernet.Link
+  Ethernet.VLANTermination
   Firewall
   Firewall.Chain
   Firewall.Level
@@ -96,6 +99,130 @@ Check that ubus has expected datamodels available:
   Users.User
   X_PRPL_WANManager
   X_PRPL_WANManager.WAN
+  X_Prpl_PersistentConfiguration
+  X_Prpl_PersistentConfiguration.Config
+  X_Prpl_PersistentConfiguration.Config.Security
+  X_Prpl_PersistentConfiguration.Service
+
+Check that we've correct bridge aliases:
+
+  $ R "ubus call Bridging _get \"{'rel_path':'Bridge.*.Alias'}\" | jsonfilter -e @[*].Alias | sort"
+  guest
+  lan
+
+Check that we've correct DHCP pool settings:
+
+  $ R "ubus call DHCPv4.Server.Pool _get \"{'rel_path':'*'}\" | grep -E '(Alias|MinAddres|MaxAddress|Enable|Servers|Status)' | sort"
+  \t\t"Alias": "guest", (esc)
+  \t\t"Alias": "lan", (esc)
+  \t\t"DNSServers": "192.168.1.1", (esc)
+  \t\t"DNSServers": "192.168.2.1", (esc)
+  \t\t"Enable": false, (esc)
+  \t\t"Enable": true, (esc)
+  \t\t"MaxAddress": "192.168.1.249", (esc)
+  \t\t"MaxAddress": "192.168.2.249", (esc)
+  \t\t"MinAddress": "192.168.1.100", (esc)
+  \t\t"MinAddress": "192.168.2.100", (esc)
+  \t\t"Status": "Enabled", (esc)
+  \t\t"Status": "Error_Misconfigured", (esc)
+
+  $ R "ubus call DHCPv6.Server.Pool _get \"{'rel_path':'*'}\" | grep -E '(Alias|Enable|Status)' | sort"
+  \t\t"Alias": "guest", (esc)
+  \t\t"Alias": "lan", (esc)
+  \t\t"Enable": false, (esc)
+  \t\t"Enable": true, (esc)
+  \t\t"IANAEnable": false, (esc)
+  \t\t"IANAEnable": false, (esc)
+  \t\t"IAPDEnable": false, (esc)
+  \t\t"IAPDEnable": false, (esc)
+  \t\t"Status": "Disabled", (esc)
+  \t\t"Status": "Enabled", (esc)
+
+Check that we've expected firewall rules:
+  $ R "ubus call Firewall _get \"{'rel_path':'X_Prpl_Service.'}\" | jsonfilter -e @[*].Alias -e @[*].Protocol -e @[*].DestinationPort | grep -v '^$' | sort"
+  123
+  17
+  22
+  53
+  546
+  547
+  6,17
+  67
+  68
+  80,443
+  80,443
+  ICMP
+  IGMP
+  IGMP
+  TCP
+  TCP
+  TCP
+  UDP
+  UDP
+  UDP
+  UDP,TCP
+  cpe-Time-br-lan
+  cpe-dhcpv4c-wan
+  dhcp-server
+  dhcpv6-client
+  dhcpv6-server
+  dns
+  http
+  http-guest
+  icmp-8
+  igmp-lan
+  igmp-wan
+  ssh
+
+  $ R "ubus call Firewall.Chain _get \"{'rel_path':'*.Rule.*'}\" | jsonfilter -e @[*].Alias -e @[*].Protocol -e @[*].DestPort | sort"
+  -1
+  -1
+  -1
+  -1
+  -1
+  -1
+  -1
+  -1
+  1
+  110
+  123
+  143
+  17
+  17
+  20
+  21
+  22
+  25
+  443
+  53
+  53
+  6
+  6
+  6
+  6
+  6
+  6
+  6
+  6
+  6
+  6
+  80
+  cpe-Rule-1
+  cstate
+  dns-tcp
+  dns-udp
+  ftp
+  ftp-data
+  http
+  https
+  icmp
+  imap
+  last-rule
+  last-tcp-rule
+  ntp
+  pop3
+  smtp
+  ssh
 
 Check that we've correct hostname and release info:
 
