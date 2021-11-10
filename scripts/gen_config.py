@@ -59,6 +59,12 @@ def load_yaml(fname: str, profile: dict):
                 if f.get("name", "") == "" or f.get("uri", "") == "":
                     die(f"Found bad feed {f}")
                 profile["feeds"][f.get("name")] = f
+        elif n in {"additional_packages"}:
+            for f in new.get(n):
+                if not f.get("feed") or not f.get("packages"):
+                    die(f"Found bad additional_packages {f}")
+            profile["additional_packages"].extend(new.get(n))
+
     return profile
 
 
@@ -88,6 +94,7 @@ if "clean" in sys.argv:
     quit(0)
 
 profile = {
+    "additional_packages": [],
     "description": [],
     "diffconfig": "",
     "feeds": {},
@@ -137,6 +144,12 @@ for p in profile.get("feeds", []):
     if run(["./scripts/feeds", "install", "-a", "-f", "-p", f.get("name")]).returncode:
         die(f"Error installing {feed}")
 
+for ap in profile.get("additional_packages"):
+    feed = ap["feed"]
+    for package in ap["packages"]:
+        if run(["./scripts/feeds", "install", "-f", "-p", feed, package]).returncode:
+            die(f"Error installing additional package {package} from {feed} feed")
+
 if profile.get("external_target", False):
     if run(["./scripts/feeds", "install", profile["target"]]).returncode:
         die(f"Error installing external target {profile['target']}")
@@ -156,6 +169,11 @@ config_output += f"{profile.get('diffconfig', '')}"
 for package in profile.get("packages", []):
     print(f"Add package to .config: {package}")
     config_output += f"CONFIG_PACKAGE_{package}=y\n"
+
+for ap in profile.get("additional_packages"):
+    for package in ap["packages"]:
+        print(f"Add additional package to .config: {package}")
+        config_output += f"CONFIG_PACKAGE_{package}=y\n"
 
 Path(".config").write_text(config_output)
 print("Configuration written to .config")
