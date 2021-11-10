@@ -6,6 +6,11 @@ feeds:
     tracking_branch: prplwrt-19.07
     revision: prplos-v1.3
 
+additional_packages:
+  - feed: packages
+    packages:
+      - chrony
+
 packages:
   - obuspa
   - u80211d
