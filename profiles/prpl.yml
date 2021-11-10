@@ -6,6 +6,11 @@ feeds:
     tracking_branch: prplos
     revision: 3591cb9012c51f8c3cd9569e1ad54c0185cd414a
 
+additional_packages:
+  - feed: packages
+    packages:
+      - chrony
+
 packages:
   - obuspa
   - u80211d
