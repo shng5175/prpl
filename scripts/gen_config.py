@@ -33,6 +33,7 @@ def usage(code: int = 0):
     )
     quit(code)
 
+
 def load_yaml(fname: str, profile: dict):
     profile_file = (profile_folder / fname).with_suffix(".yml")
 
@@ -44,7 +45,7 @@ def load_yaml(fname: str, profile: dict):
         if n in {"target", "subtarget", "external_target"}:
             if profile.get(n):
                 die(f"Duplicate tag found {n}")
-            profile.update({n:new.get(n)})
+            profile.update({n: new.get(n)})
         elif n in {"description"}:
             profile["description"].append(new.get(n))
         elif n in {"packages"}:
@@ -56,9 +57,10 @@ def load_yaml(fname: str, profile: dict):
         elif n in {"feeds"}:
             for f in new.get(n):
                 if f.get("name", "") == "" or f.get("uri", "") == "":
-                     die(f"Found bad feed {f}")
+                    die(f"Found bad feed {f}")
                 profile["feeds"][f.get("name")] = f
     return profile
+
 
 if "list" in sys.argv:
     print(f"Profiles in {profile_folder}")
@@ -85,7 +87,13 @@ if "clean" in sys.argv:
     print("Tree is now clean")
     quit(0)
 
-profile = {"profiles": [], "packages": [], "description": [], "diffconfig": "", "feeds": {}}
+profile = {
+    "profiles": [],
+    "packages": [],
+    "description": [],
+    "diffconfig": "",
+    "feeds": {},
+}
 
 for p in sys.argv[1:]:
     profile = load_yaml(p, profile)
