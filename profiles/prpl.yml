@@ -6,6 +6,11 @@ feeds:
     tracking_branch: prplos
     revision: c0be578a7b1f4760b38c3c3046cb84ca78ffbeb3
 
+additional_packages:
+  - feed: packages
+    packages:
+      - chrony
+
 packages:
   - acl-manager
   - amx-cli
