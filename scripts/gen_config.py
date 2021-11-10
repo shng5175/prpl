@@ -88,11 +88,11 @@ if "clean" in sys.argv:
     quit(0)
 
 profile = {
-    "profiles": [],
-    "packages": [],
     "description": [],
     "diffconfig": "",
     "feeds": {},
+    "packages": [],
+    "profiles": [],
 }
 
 for p in sys.argv[1:]:
