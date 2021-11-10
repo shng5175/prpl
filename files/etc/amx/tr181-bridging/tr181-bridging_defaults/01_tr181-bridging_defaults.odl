@@ -1,0 +1,25 @@
+%populate {
+    object Bridging.Bridge {
+        instance add ("guest") {
+            parameter Enable = true;
+            object Port {
+                instance add("GUEST") {
+                    parameter ManagementPort = true;
+                    parameter Enable = true;
+                    parameter Name = "br-guest";
+                }
+                instance add("guest_wlan0") {
+                    parameter Enable = true;
+                    parameter Name = "wlan0";
+                    parameter IsWireless = true;
+                }
+                instance add("guest_wlan1") {
+                    parameter Enable = true;
+                    parameter Name = "wlan1";
+                    parameter IsWireless = true;
+                }
+            }
+        }
+    }
+}
+
