@@ -58,10 +58,22 @@ def load_yaml(fname: str, profile: dict):
             for f in new.get(n):
                 if f.get("name", "") == "" or f.get("uri", "") == "":
                     die(f"Found bad feed {f}")
+
                 existing_feed = profile["feeds"].get(f.get("name"))
                 if existing_feed:
+                    uri1 = existing_feed["uri"]
+                    rev1 = existing_feed["revision"]
+                    name1 = existing_feed["name"]
+
+                    uri2 = f.get("uri")
+                    rev2 = f.get("revision")
+                    name2 = f.get("name")
+
                     if f.get("packages"):
                         existing_feed["packages"] += f.get("packages")
+
+                    if uri1 == uri2 and rev1 != rev2:
+                        die(f"Revisions conflicts {name1}:{rev1} != {name2}:{rev2}")
                 else:
                     profile["feeds"][f.get("name")] = f
         elif n in {"additional_packages"}:
