@@ -58,7 +58,12 @@ def load_yaml(fname: str, profile: dict):
             for f in new.get(n):
                 if f.get("name", "") == "" or f.get("uri", "") == "":
                     die(f"Found bad feed {f}")
-                profile["feeds"][f.get("name")] = f
+                existing_feed = profile["feeds"].get(f.get("name"))
+                if existing_feed:
+                    if f.get("packages"):
+                        existing_feed["packages"] += f.get("packages")
+                else:
+                    profile["feeds"][f.get("name")] = f
         elif n in {"additional_packages"}:
             for f in new.get(n):
                 if not f.get("feed") or not f.get("packages"):
@@ -139,10 +144,21 @@ if run(["./scripts/feeds", "setup", *feeds]).returncode:
 if run(["./scripts/feeds", "update"]).returncode:
     die(f"Error updating feeds")
 
-for p in profile.get("feeds", []):
+for p in profile.get("feeds"):
     f = profile["feeds"].get(p)
-    if run(["./scripts/feeds", "install", "-a", "-f", "-p", f.get("name")]).returncode:
-        die(f"Error installing {feed}")
+    if f.get("packages"):
+        feed = f.get("name")
+        for package in f.get("packages"):
+            print(f"Installing {package} from {feed}")
+            if run(
+                ["./scripts/feeds", "install", "-f", "-p", feed, package]
+            ).returncode:
+                die(f"Error installing package {package} from {feed} feed")
+    else:
+        if run(
+            ["./scripts/feeds", "install", "-a", "-f", "-p", f.get("name")]
+        ).returncode:
+            die(f"Error installing {feed}")
 
 for ap in profile.get("additional_packages"):
     feed = ap["feed"]
@@ -169,6 +185,14 @@ config_output += f"{profile.get('diffconfig', '')}"
 for package in profile.get("packages", []):
     print(f"Add package to .config: {package}")
     config_output += f"CONFIG_PACKAGE_{package}=y\n"
+
+for p in profile.get("feeds"):
+    f = profile["feeds"].get(p)
+    if f.get("packages"):
+        feed = f.get("name")
+        for package in f.get("packages"):
+            print(f"Add {package} from {feed} to .config:")
+            config_output += f"CONFIG_PACKAGE_{package}=y\n"
 
 for ap in profile.get("additional_packages"):
     for package in ap["packages"]:
