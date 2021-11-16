@@ -52,6 +52,14 @@ feeds:
     packages:
       - chrony
 
+  - name: packages_2102
+    uri: https://gitlab.com/openwrt/feed/packages.git
+    tracking_branch: openwrt-21.02
+    revision: b1d69822db7ac61a536f900d0a30d73f714f85a6
+    packages:
+      - libgpg-error
+      - libgpgme
+      - libassuan
 
 diffconfig: |
           CONFIG_PACKAGE_rpcd-mod-luci=y
