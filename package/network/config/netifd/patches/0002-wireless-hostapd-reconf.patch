@@ -1,0 +1,849 @@
+Netifd support WiFi UCI Reconf feature
+
+Netifd on each VAP configuration change used to send setup call to mac80211.sh
+script, the mac80211.sh script inturn calls the restart of hostapd.
+When netifd receives ubus call network reload, the netifd will handle the
+wireless interfaces by sending the reconf call to mac80211.sh inturn reconf
+is passed to hostapd as well. Also based on param_changed and
+interface_changed UCI parameters reconf will be handled by netifd.
+
+--- a/config.c
++++ b/config.c
+@@ -352,7 +352,7 @@ config_parse_wireless_interface(struct w
+ }
+ 
+ static void
+-config_init_wireless(void)
++config_init_wireless(struct wireless_device *config_wdev)
+ {
+ 	struct wireless_device *wdev;
+ 	struct uci_element *e;
+@@ -363,6 +363,15 @@ config_init_wireless(void)
+ 		return;
+ 	}
+ 
++	if (config_wdev != NULL) {
++		vlist_for_each_element(&wireless_devices, wdev, node) {
++			if (strcmp(wdev->name, config_wdev->name))
++				wdev->update_block = true;
++			else
++				wdev->update_block = false;
++		}
++	}
++
+ 	vlist_update(&wireless_devices);
+ 
+ 	uci_foreach_element(&uci_wireless->sections, e) {
+@@ -375,9 +384,14 @@ config_init_wireless(void)
+ 
+ 	vlist_flush(&wireless_devices);
+ 
+-	vlist_for_each_element(&wireless_devices, wdev, node) {
+-		wdev->vif_idx = 0;
+-		vlist_update(&wdev->interfaces);
++	if (config_wdev == NULL) {
++		vlist_for_each_element(&wireless_devices, wdev, node) {
++			wdev->vif_idx = 0;
++			vlist_update(&wdev->interfaces);
++		}
++	} else {
++		config_wdev->vif_idx = 0;
++		vlist_update(&config_wdev->interfaces);
+ 	}
+ 
+ 	uci_foreach_element(&uci_wireless->sections, e) {
+@@ -390,10 +404,18 @@ config_init_wireless(void)
+ 		if (!dev_name)
+ 			continue;
+ 
+-		wdev = vlist_find(&wireless_devices, dev_name, wdev, node);
+-		if (!wdev) {
+-			DPRINTF("device %s not found!\n", dev_name);
+-			continue;
++		if (config_wdev == NULL) {
++			wdev = vlist_find(&wireless_devices, dev_name, wdev, node);
++			if (!wdev) {
++				DPRINTF("device %s not found!\n", dev_name);
++				continue;
++			}
++		} else {
++			/* Skip interfaces not related to config_wdev */
++			if (strcmp(config_wdev->name, dev_name))
++				continue;
++
++			wdev = config_wdev;
+ 		}
+ 
+ 		config_parse_wireless_interface(wdev, s);
+@@ -403,8 +425,47 @@ config_init_wireless(void)
+ 		vlist_flush(&wdev->interfaces);
+ }
+ 
++static void config_reload(void) {
++	struct wireless_device *wdev;
++
++	vlist_for_each_element(&wireless_devices, wdev, node)
++		wireless_device_set_up(wdev);
++}
++
+ int
+-config_init_all(void)
++config_wireless(struct wireless_device *wdev)
++{
++	int ret = 0;
++	char *err;
++
++	uci_network = config_init_package("network");
++	if (!uci_network) {
++		uci_get_errorstr(uci_ctx, &err, NULL);
++		netifd_log_message(L_CRIT, "Failed to load network config (%s)\n", err);
++		free(err);
++		return -1;
++	}
++
++	uci_wireless = config_init_package("wireless");
++	if (!uci_wireless && uci_ctx->err != UCI_ERR_NOTFOUND) {
++		uci_get_errorstr(uci_ctx, &err, NULL);
++		netifd_log_message(L_CRIT, "Failed to load wireless config (%s)\n", err);
++		free(err);
++		ret = -1;
++	}
++
++	vlist_update(&interfaces);
++	config_init = true;
++	device_lock();
++	config_init_wireless(wdev);
++	config_init = false;
++	device_unlock();
++
++	return ret;
++}
++
++int
++config_init_all(bool reload)
+ {
+ 	int ret = 0;
+ 	char *err;
+@@ -435,7 +496,11 @@ config_init_all(void)
+ 	config_init_ip();
+ 	config_init_rules();
+ 	config_init_globals();
+-	config_init_wireless();
++
++	if (reload)
++		config_reload();
++	else
++		config_init_wireless(NULL);
+ 
+ 	config_init = false;
+ 	device_unlock();
+--- a/config.h
++++ b/config.h
+@@ -17,8 +17,11 @@
+ #include <libubox/blobmsg.h>
+ #include <uci_blob.h>
+ 
++struct wireless_device;
++
+ extern bool config_init;
+ 
+-int config_init_all(void);
++int config_init_all(bool reload);
++int config_wireless(struct wireless_device *wdev);
+ 
+ #endif
+--- a/interface.h
++++ b/interface.h
+@@ -37,6 +37,7 @@ enum interface_state {
+ 	IFS_UP,
+ 	IFS_TEARDOWN,
+ 	IFS_DOWN,
++	IFS_SETUP_RECONF,
+ };
+ 
+ enum interface_config_state {
+--- a/main.c
++++ b/main.c
+@@ -210,7 +210,7 @@ static void netifd_do_restart(struct ulo
+ 
+ int netifd_reload(void)
+ {
+-	return config_init_all();
++	return config_init_all(true);
+ }
+ 
+ void netifd_restart(void)
+@@ -332,7 +332,7 @@ int main(int argc, char **argv)
+ 		return 1;
+ 	}
+ 
+-	config_init_all();
++	config_init_all(false);
+ 
+ 	uloop_run();
+ 	netifd_kill_processes();
+--- a/wireless.c
++++ b/wireless.c
+@@ -12,24 +12,39 @@
+  * GNU General Public License for more details.
+  */
+ #include <signal.h>
++#include <sys/types.h>
++#include <sys/wait.h>
+ #include "netifd.h"
+ #include "wireless.h"
+ #include "handler.h"
+ #include "ubus.h"
+ 
+ #define WIRELESS_SETUP_RETRY	3
++#define RECONF_IFACE_LIST_MAX 32
+ 
+ struct vlist_tree wireless_devices;
+ struct avl_tree wireless_drivers;
+ static struct blob_buf b;
+ static int drv_fd;
+ 
+-static const struct blobmsg_policy wdev_policy =
+-	{ .name = "disabled", .type = BLOBMSG_TYPE_BOOL };
++enum reconf_state {
++	NOTHING_CHANGED,
++	NEED_RESTART,
++	DONE_RECONF
++};
++
++enum {
++	WDEV_ATTR_DISABLED,
++	__WDEV_ATTR_MAX,
++};
++
++static const struct blobmsg_policy wdev_policy[__WDEV_ATTR_MAX] = {
++	[WDEV_ATTR_DISABLED] = { .name = "disabled", .type = BLOBMSG_TYPE_BOOL },
++};
+ 
+ static const struct uci_blob_param_list wdev_param = {
+-	.n_params = 1,
+-	.params = &wdev_policy,
++	.n_params = ARRAY_SIZE(wdev_policy),
++	.params = wdev_policy,
+ };
+ 
+ enum {
+@@ -37,6 +52,7 @@ enum {
+ 	VIF_ATTR_NETWORK,
+ 	VIF_ATTR_ISOLATE,
+ 	VIF_ATTR_MODE,
++	VIF_ATTR_IFNAME,
+ 	__VIF_ATTR_MAX,
+ };
+ 
+@@ -45,6 +61,7 @@ static const struct blobmsg_policy vif_p
+ 	[VIF_ATTR_NETWORK] = { .name = "network", .type = BLOBMSG_TYPE_ARRAY },
+ 	[VIF_ATTR_ISOLATE] = { .name = "isolate", .type = BLOBMSG_TYPE_BOOL },
+ 	[VIF_ATTR_MODE] = { .name = "mode", .type = BLOBMSG_TYPE_STRING },
++	[VIF_ATTR_IFNAME] = { .name = "ifname", .type = BLOBMSG_TYPE_STRING },
+ };
+ 
+ static const struct uci_blob_param_list vif_param = {
+@@ -196,6 +213,7 @@ wireless_device_free_state(struct wirele
+ 	vlist_for_each_element(&wdev->interfaces, vif, node) {
+ 		free(vif->data);
+ 		vif->data = NULL;
++		free(vif->ifname);
+ 		vif->ifname = NULL;
+ 	}
+ }
+@@ -225,6 +243,8 @@ static void wireless_interface_handle_li
+ 		iface = vlist_find(&interfaces, network, iface, node);
+ 		if (!iface)
+ 			continue;
++		if (strchr(vif->ifname, '.'))
++			continue;
+ 
+ 		interface_handle_link(iface, vif->ifname, up, true);
+ 	}
+@@ -281,11 +301,172 @@ wireless_device_run_handler(struct wirel
+ 	free(config);
+ }
+ 
++static bool
++wireless_vif_reconf_add(struct wireless_device *wdev, struct wireless_interface *vif, char reconf_iface_list[][IFACE_NAME_MAX_LEN])
++{
++	char iface[IFACE_NAME_MAX_LEN];
++	int i;
++
++	if (vif == NULL)
++		strncpy(iface, wdev->master_iface, IFACE_NAME_MAX_LEN);
++	else {
++		if (!vif->param_changed) {
++			return false;
++		} else {
++			vif->param_changed = false;
++			strncpy(iface, vif->ifname, IFACE_NAME_MAX_LEN);
++		}
++	}
++
++	for (i = 0; i < RECONF_IFACE_LIST_MAX && strcmp(reconf_iface_list[i], ""); i++) {
++		netifd_log_message(L_NOTICE, "[UCI]: iterating iface_list: %d, %s\n", i,
++				reconf_iface_list[i]);
++	}
++
++	if (i >= RECONF_IFACE_LIST_MAX) {
++		netifd_log_message(L_CRIT, "[UCI] %s: WARNING: No space left in reconf_iface_list array\n",
++                __FUNCTION__);
++		return false;
++	}
++
++	strncpy(reconf_iface_list[i], iface, IFACE_NAME_MAX_LEN);
++
++	return true;
++}
++
++static void
++wireless_reconf_serial_executer(struct wireless_device *wdev, const char reconf_iface_list[][IFACE_NAME_MAX_LEN])
++{
++	char* config;
++	int iface_list_idx, iface_spaceholder_idx, pid, i = 0;
++	const char* argv[7];
++	char action[] = "reconf";
++	char ifaces[IFACE_NAME_MAX_LEN * RECONF_IFACE_LIST_MAX] = {0};
++	char tmp_iface[IFACE_NAME_MAX_LEN] = {0};
++
++	prepare_config(wdev, &b, true);
++	config = blobmsg_format_json(b.head, true);
++
++	argv[i++] = wdev->drv->script;
++	argv[i++] = wdev->drv->name;
++	argv[i++] = action;
++	argv[i++] = wdev->name;
++	iface_spaceholder_idx = i++; /* iface name spaceholder */
++	argv[i++] = config;
++	argv[i] = NULL;
++
++	for (iface_list_idx = 0; iface_list_idx < RECONF_IFACE_LIST_MAX
++			&& strcmp(reconf_iface_list[iface_list_idx], ""); iface_list_idx++) {
++		snprintf(tmp_iface, sizeof(tmp_iface), "%s ", reconf_iface_list[iface_list_idx]);
++		strcat(ifaces, tmp_iface);
++	}
++
++	argv[iface_spaceholder_idx] = ifaces;
++
++	if ((pid = fork()) < 0)
++		netifd_log_message(L_CRIT, "[UCI] %s: fork failed\n", __FUNCTION__);
++
++	if (pid == 0) {
++		struct netifd_process *proc = &wdev->script_task;
++
++		if (proc->dir_fd >= 0) {
++			if (fchdir(proc->dir_fd)) {
++				netifd_log_message(L_CRIT, "[UCI] %s: fchdir failed on %s\n",
++								strerror(errno));
++				free(config);
++				return;
++			}
++		}
++
++		execvp(argv[0], (char **) argv);
++		netifd_log_message(L_CRIT, "[UCI] %s: execvp failed on %s\n", strerror(errno));
++	} else {
++		/* prevent processes for running at the same time
++			in order to prevent race condition on shared files */
++		wait(NULL);
++	}
++
++	free(config);
++}
++
++static void
++wireless_vif_reconf_exec(struct wireless_device *wdev, const char reconf_iface_list[][IFACE_NAME_MAX_LEN])
++{
++	int pid;
++
++	if ((pid = fork()) < 0)
++		netifd_log_message(L_CRIT, "[UCI] %s: fork failed\n", __FUNCTION__);
++
++	if (!pid) {
++		wireless_reconf_serial_executer(wdev, reconf_iface_list);
++		exit(0);
++	}
++}
++
++static void
++wireless_wdev_init_config(struct wireless_device *wdev);
++
++static enum reconf_state
++wireless_device_reconf(struct wireless_device *wdev)
++{
++	char reconf_iface_list[RECONF_IFACE_LIST_MAX][IFACE_NAME_MAX_LEN] = { { 0 } };
++	bool need_reconf = false;
++	struct wireless_interface *vif;
++	int res;
++
++	if ((wdev->state != IFS_UP) && (wdev->state != IFS_DOWN))
++		return false;
++
++	wdev->state = IFS_SETUP_RECONF;
++
++	res = config_wireless(wdev);
++	if (res < 0)
++		netifd_log_message(L_CRIT, "[UCI] %s: config_wireless failed\n", __FUNCTION__);
++
++	wireless_wdev_init_config(wdev);
++
++	wdev->state = IFS_UP;
++
++	if (wdev->param_changed) {
++		wdev->interface_changed = false;
++		vlist_for_each_element(&wdev->interfaces, vif, node) {
++			if (vif->ifname) {
++				vif->param_changed = false;
++			}
++		}
++		wdev->param_changed = false;
++		return NEED_RESTART;
++	}
++
++	if (wdev->interface_changed) {
++		need_reconf = wireless_vif_reconf_add(wdev, NULL, reconf_iface_list);
++		wdev->interface_changed = false;
++	}
++
++	vlist_for_each_element(&wdev->interfaces, vif, node) {
++		if (vif->ifname) {
++			if (wireless_vif_reconf_add(wdev, vif, reconf_iface_list))
++				need_reconf = true;
++		}
++	}
++
++	if (need_reconf) {
++		wireless_vif_reconf_exec(wdev, reconf_iface_list);
++		return DONE_RECONF;
++	}
++
++	return NOTHING_CHANGED;
++}
++
+ static void
+ __wireless_device_set_up(struct wireless_device *wdev)
+ {
+-	if (wdev->disabled)
++	enum reconf_state reconf_state;
++
++	if (wdev->disabled && wdev->down_for_up) {
++		wdev->down_for_up = false;
+ 		return;
++	}
+ 
+ 	if (wdev->retry_setup_failed)
+ 		return;
+@@ -293,13 +474,27 @@ __wireless_device_set_up(struct wireless
+ 	if (!wdev->autostart)
+ 		return;
+ 
+-	if (wdev->state != IFS_DOWN || config_init)
++	if ((wdev->state != IFS_DOWN && wdev->state != IFS_UP) || config_init)
+ 		return;
+ 
+-	free(wdev->prev_config);
+-	wdev->prev_config = NULL;
+-	wdev->state = IFS_SETUP;
+-	wireless_device_run_handler(wdev, true);
++	if (wdev->down_for_up || (wdev->state == IFS_DOWN && !wdev->disabled)) {
++		free(wdev->prev_config);
++		wdev->prev_config = NULL;
++    if (wdev->state == IFS_DOWN)
++			config_wireless(wdev);
++
++		wdev->state = IFS_SETUP;
++		wireless_device_run_handler(wdev, true);
++		wdev->down_for_up = false;
++	} else {
++		reconf_state = wireless_device_reconf(wdev);
++		if (reconf_state == NEED_RESTART) {
++			wdev->down_for_up = true;
++			wireless_device_set_down(wdev);
++			wdev->autostart = true;
++			wdev->cancel = false;
++		}
++	}
+ }
+ 
+ static void
+@@ -313,6 +508,13 @@ wireless_device_free(struct wireless_dev
+ }
+ 
+ static void
++wireless_interface_free(struct wireless_interface *vif)
++{
++	free(vif->ifname);
++	free(vif);
++}
++
++static void
+ wdev_handle_config_change(struct wireless_device *wdev)
+ {
+ 	enum interface_config_state state = wdev->config_state;
+@@ -344,7 +546,13 @@ wireless_device_mark_down(struct wireles
+ 
+ 	wdev->cancel = false;
+ 	wdev->state = IFS_DOWN;
+-	wireless_device_free_state(wdev);
++
++	if (wdev->down_for_up) {
++		wdev->config_state = IFC_RELOAD;
++	} else {
++		wireless_device_free_state(wdev);
++	}
++
+ 	wdev_handle_config_change(wdev);
+ }
+ 
+@@ -438,7 +646,7 @@ wireless_device_set_down(struct wireless
+ static void
+ wdev_set_config_state(struct wireless_device *wdev, enum interface_config_state s)
+ {
+-	if (wdev->config_state != IFC_NORMAL)
++	if (wdev->config_state != IFC_NORMAL || wdev->state == IFS_SETUP_RECONF)
+ 		return;
+ 
+ 	wdev->config_state = s;
+@@ -459,21 +667,41 @@ wdev_prepare_prev_config(struct wireless
+ }
+ 
+ static void
++wireless_wdev_init_config(struct wireless_device *wdev)
++{
++	struct blob_attr *tb[__WDEV_ATTR_MAX];
++	struct blob_attr *cur;
++
++	blobmsg_parse(wdev_policy, __WDEV_ATTR_MAX, tb, blob_data(wdev->config), blob_len(wdev->config));
++
++	cur = tb[WDEV_ATTR_DISABLED];
++	if (cur)
++		wdev->disabled = blobmsg_get_bool(cur);
++
++}
++
++static void
+ wdev_change_config(struct wireless_device *wdev, struct wireless_device *wd_new)
+ {
+ 	struct blob_attr *new_config = wd_new->config;
+ 	bool disabled = wd_new->disabled;
+-
+-	free(wd_new);
+-
+ 	wdev_prepare_prev_config(wdev);
+-	if (blob_attr_equal(wdev->config, new_config) && wdev->disabled == disabled)
++	if (blob_attr_equal(wdev->config, new_config) && wdev->disabled == disabled) {
++		if (wdev->state == IFS_SETUP_RECONF) {
++			wdev->param_changed = false;
++		}
++		free(wd_new);
+ 		return;
++	}
+ 
+ 	D(WIRELESS, "Update configuration of wireless device '%s'\n", wdev->name);
+ 	free(wdev->config);
+ 	wdev->config = blob_memdup(new_config);
+-	wdev->disabled = disabled;
++	wdev->disabled = wd_new->disabled;
++	wdev->interface_changed = wd_new->interface_changed;
++	wdev->param_changed = wd_new->param_changed;
++	free(wd_new);
++	wireless_wdev_init_config(wdev);
+ 	wdev->retry_setup_failed = false;
+ 	wdev_set_config_state(wdev, IFC_RELOAD);
+ }
+@@ -492,7 +720,17 @@ wdev_update(struct vlist_tree *tree, str
+ 	struct wireless_device *wd_old = container_of(node_old, struct wireless_device, node);
+ 	struct wireless_device *wd_new = container_of(node_new, struct wireless_device, node);
+ 
++	/* Skip devices currently up unmodified */
++
+ 	if (wd_old && wd_new) {
++		if (wd_old->state == IFS_UP)
++			return;
++
++		if (wd_old->update_block) {
++			wd_old->update_block = false;
++			return;
++		}
++
+ 		wdev_change_config(wd_old, wd_new);
+ 	} else if (wd_old) {
+ 		D(WIRELESS, "Delete wireless device '%s'\n", wd_old->name);
+@@ -561,6 +799,7 @@ wireless_interface_init_config(struct wi
+ {
+ 	struct blob_attr *tb[__VIF_ATTR_MAX];
+ 	struct blob_attr *cur;
++	char *ifname = NULL;
+ 
+ 	vif->network = NULL;
+ 	blobmsg_parse(vif_policy, __VIF_ATTR_MAX, tb, blob_data(vif->config), blob_len(vif->config));
+@@ -575,26 +814,60 @@ wireless_interface_init_config(struct wi
+ 	cur = tb[VIF_ATTR_MODE];
+ 	if (cur)
+ 		vif->ap_mode = !strcmp(blobmsg_get_string(cur), "ap");
++
++	cur = tb[VIF_ATTR_IFNAME];
++	if (cur) {
++		ifname = blobmsg_get_string(cur);
++		if (!vif->ifname) {
++			vif->ifname = strdup(ifname);
++		} else {
++			if (strcmp(ifname, vif->ifname)) {
++				free(vif->ifname);
++				vif->ifname = strdup(ifname);
++			}
++		}
++	}
+ }
+ 
+ static void
+-vif_update(struct vlist_tree *tree, struct vlist_node *node_new,
+-	   struct vlist_node *node_old)
++vif_update_reconf(struct wireless_interface *vif_old, struct wireless_interface *vif_new,
++				  struct wireless_device *wdev)
+ {
+-	struct wireless_interface *vif_old = container_of(node_old, struct wireless_interface, node);
+-	struct wireless_interface *vif_new = container_of(node_new, struct wireless_interface, node);
+-	struct wireless_device *wdev;
++	if (!vif_old || !vif_new) {
++		wdev->interface_changed = true;
++		if (vif_old && !vif_old->ap_mode)
++			wdev->param_changed = true;
++		return;
++	}
+ 
+-	if (vif_old)
+-		wdev = vif_old->wdev;
+-	else
+-		wdev = vif_new->wdev;
++	free((void *) vif_old->section);
++	vif_old->section = strdup(vif_new->section);
++	if (blob_attr_equal(vif_old->config, vif_new->config)) {
++		wireless_interface_free(vif_new);
++		return;
++	}
++
++	D(WIRELESS, "Update wireless interface %s on device %s\n", vif_new->name, wdev->name);
++	free(vif_old->config);
++	vif_old->config = blob_memdup(vif_new->config);
++	vif_old->isolate = vif_new->isolate;
++	vif_old->ap_mode = vif_new->ap_mode;
++	vif_old->param_changed = true;
++	wireless_interface_init_config(vif_old);
++	if (!vif_old->ap_mode)
++		wdev->param_changed = true;
++	wireless_interface_free(vif_new);
++}
+ 
++static void
++vif_update_no_reconf(struct wireless_interface *vif_old, struct wireless_interface *vif_new,
++					 struct wireless_device *wdev)
++{
+ 	if (vif_old && vif_new) {
+ 		free((void *) vif_old->section);
+ 		vif_old->section = strdup(vif_new->section);
+ 		if (blob_attr_equal(vif_old->config, vif_new->config)) {
+-			free(vif_new);
++			wireless_interface_free(vif_new);
+ 			return;
+ 		}
+ 
+@@ -604,25 +877,50 @@ vif_update(struct vlist_tree *tree, stru
+ 		vif_old->config = blob_memdup(vif_new->config);
+ 		vif_old->isolate = vif_new->isolate;
+ 		vif_old->ap_mode = vif_new->ap_mode;
++		vif_old->param_changed = vif_new->param_changed;
+ 		wireless_interface_init_config(vif_old);
+-		free(vif_new);
++		wireless_interface_free(vif_new);
+ 	} else if (vif_new) {
++		if (wdev->state == IFS_SETUP_RECONF)
++			wdev->interface_changed = true;
+ 		D(WIRELESS, "Create new wireless interface %s on device %s\n", vif_new->name, wdev->name);
+ 		vif_new->section = strdup(vif_new->section);
+ 		vif_new->config = blob_memdup(vif_new->config);
+ 		wireless_interface_init_config(vif_new);
++		if ((!vif_new->ap_mode) && (wdev->state == IFS_SETUP_RECONF))
++			wdev->param_changed = true;
+ 	} else if (vif_old) {
+ 		D(WIRELESS, "Delete wireless interface %s on device %s\n", vif_old->name, wdev->name);
+ 		wireless_interface_handle_link(vif_old, false);
+ 		free((void *) vif_old->section);
+ 		free(vif_old->config);
+-		free(vif_old);
++		wireless_interface_free(vif_old);
+ 	}
+ 
+ 	wdev_set_config_state(wdev, IFC_RELOAD);
+ }
+ 
+ static void
++vif_update(struct vlist_tree *tree, struct vlist_node *node_new,
++		struct vlist_node *node_old)
++{
++	struct wireless_interface *vif_old = container_of(node_old, struct wireless_interface, node);
++	struct wireless_interface *vif_new = container_of(node_new, struct wireless_interface, node);
++	struct wireless_device *wdev;
++
++	if (vif_old) {
++		wdev = vif_old->wdev;
++		if (wdev->state == IFS_SETUP_RECONF)
++			vif_update_reconf(vif_old, vif_new, wdev);
++		else
++			vif_update_no_reconf(vif_old, vif_new, wdev);
++	} else {
++		wdev = vif_new->wdev;
++		vif_update_no_reconf(vif_old, vif_new, wdev);
++	}
++}
++
++static void
+ wireless_proc_poll_fd(struct uloop_fd *fd, unsigned int events)
+ {
+ 	struct wireless_device *wdev = container_of(fd, struct wireless_device, script_proc_fd);
+@@ -678,20 +976,27 @@ wireless_device_create(struct wireless_d
+ {
+ 	struct wireless_device *wdev;
+ 	char *name_buf;
+-	struct blob_attr *disabled;
++	struct blob_attr *tb[__WDEV_ATTR_MAX];
++	struct blob_attr *cur;
+ 
+-	blobmsg_parse(&wdev_policy, 1, &disabled, blob_data(data), blob_len(data));
++	blobmsg_parse(wdev_policy, __WDEV_ATTR_MAX, tb, blob_data(data), blob_len(data));
+ 
+ 	wdev = calloc_a(sizeof(*wdev), &name_buf, strlen(name) + 1);
+-	if (disabled && blobmsg_get_bool(disabled))
++
++	cur = tb[WDEV_ATTR_DISABLED];
++	if (cur && blobmsg_get_bool(cur))
+ 		wdev->disabled = true;
++
+ 	wdev->drv = drv;
+ 	wdev->state = IFS_DOWN;
+ 	wdev->config_state = IFC_NORMAL;
+ 	wdev->name = strcpy(name_buf, name);
+ 	wdev->config = data;
++	wdev->interface_changed = false;
++	wdev->param_changed = true;
+ 	wdev->retry_setup_failed = false;
+ 	wdev->autostart = true;
++	wdev->update_block = false;
+ 	INIT_LIST_HEAD(&wdev->script_proc);
+ 	vlist_init(&wdev->interfaces, avl_strcmp, vif_update);
+ 	wdev->interfaces.keep_old = true;
+@@ -715,7 +1020,9 @@ void wireless_interface_create(struct wi
+ 	struct blob_attr *tb[__VIF_ATTR_MAX];
+ 	struct blob_attr *cur;
+ 	char *name_buf;
+-	char name[8];
++	char name[IF_NAMESIZE];
++	char *ifname = NULL;
++	size_t master_iface_name_len;
+ 
+ 	blobmsg_parse(vif_policy, __VIF_ATTR_MAX, tb, blob_data(data), blob_len(data));
+ 
+@@ -725,13 +1032,30 @@ void wireless_interface_create(struct wi
+ 
+ 	sprintf(name, "%d", wdev->vif_idx++);
+ 
+-	vif = calloc_a(sizeof(*vif),
+-		       &name_buf, strlen(name) + 1);
++	cur = tb[VIF_ATTR_IFNAME];
++	if (cur) {
++		ifname = blobmsg_get_string(cur);
++		snprintf(name, sizeof(name), "%s", ifname);
++	}
++
++	vif = calloc_a(sizeof(*vif), &name_buf, strlen(name) + 1);
+ 	vif->name = strcpy(name_buf, name);
++
++	if (ifname) {
++		vif->ifname = strdup(ifname);
++	}
++
++	master_iface_name_len = strcspn(vif->name, ".");
++	if ((master_iface_name_len > 0) && (master_iface_name_len <= IFACE_NAME_MAX_LEN))
++		strncpy(wdev->master_iface, vif->name, master_iface_name_len);
++	else
++		wdev->master_iface[0] = '\0';
++
+ 	vif->wdev = wdev;
+ 	vif->config = data;
+ 	vif->section = section;
+ 	vif->isolate = false;
++	vif->param_changed = false;
+ 
+ 	vlist_add(&wdev->interfaces, &vif->node, vif->name);
+ }
+@@ -807,12 +1131,23 @@ wireless_interface_set_data(struct wirel
+ 	};
+ 	struct blob_attr *tb[__VIF_DATA_MAX];
+ 	struct blob_attr *cur;
++	char *ifname = NULL;
+ 
+ 	blobmsg_parse(data_policy, __VIF_DATA_MAX, tb,
+ 		      blobmsg_data(vif->data), blobmsg_data_len(vif->data));
+ 
+-	if ((cur = tb[VIF_DATA_IFNAME]))
+-		vif->ifname = blobmsg_data(cur);
++	cur = tb[VIF_DATA_IFNAME];
++	if (cur) {
++		ifname = blobmsg_data(cur);
++		if (!vif->ifname) {
++			vif->ifname = strdup(ifname);
++		} else {
++			if (strcmp(ifname, vif->ifname)) {
++				free(vif->ifname);
++				vif->ifname = strdup(ifname);
++			}
++		}
++	}
+ }
+ 
+ static int
+--- a/wireless.h
++++ b/wireless.h
+@@ -17,6 +17,8 @@
+ #include <libubox/utils.h>
+ #include "interface.h"
+ 
++#define IFACE_NAME_MAX_LEN (IFNAMSIZ + 1)
++
+ extern struct vlist_tree wireless_devices;
+ extern struct avl_tree wireless_drivers;
+ 
+@@ -56,6 +58,9 @@ struct wireless_device {
+ 	bool autostart;
+ 	bool disabled;
+ 	bool retry_setup_failed;
++	bool interface_changed;
++	char master_iface[IFACE_NAME_MAX_LEN];
++	bool param_changed;
+ 
+ 	enum interface_state state;
+ 	enum interface_config_state config_state;
+@@ -63,6 +68,8 @@ struct wireless_device {
+ 	int retry;
+ 
+ 	int vif_idx;
++	bool down_for_up;
++	bool update_block;
+ };
+ 
+ struct wireless_interface {
+@@ -75,10 +82,11 @@ struct wireless_interface {
+ 	struct blob_attr *config;
+ 	struct blob_attr *data;
+ 
+-	const char *ifname;
++	char *ifname;
+ 	struct blob_attr *network;
+ 	bool isolate;
+ 	bool ap_mode;
++	bool param_changed;
+ };
+ 
+ struct wireless_process {

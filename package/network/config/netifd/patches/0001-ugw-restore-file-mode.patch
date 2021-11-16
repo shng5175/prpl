@@ -1,0 +1,31 @@
+--- a/interface-ip.c
++++ b/interface-ip.c
+@@ -19,6 +19,7 @@
+ #include <limits.h>
+ #include <arpa/inet.h>
+ #include <netinet/in.h>
++#include <sys/stat.h>
+ 
+ #ifdef linux
+ #include <netinet/ether.h>
+@@ -1554,9 +1555,17 @@ interface_write_resolv_conf(void)
+ 
+ 	if (crcold == crcnew) {
+ 		unlink(path);
+-	} else if (rename(path, resolv_conf) < 0) {
+-		D(INTERFACE, "Failed to replace %s\n", resolv_conf);
+-		unlink(path);
++	} else { 
++		struct stat info;
++		stat(resolv_conf, &info);
++		if (rename(path, resolv_conf) < 0) {
++			D(INTERFACE, "Failed to replace %s\n", resolv_conf);
++			unlink(path);
++		}
++		if (chmod(resolv_conf, info.st_mode) != 0){
++			D(INTERFACE, "Failed to change permission of %s\n", path);
++			return;
++		}
+ 	}
+ }
+ 

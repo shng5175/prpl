@@ -1,0 +1,117 @@
+From a1aa2d57eedc7077e0af49ede178817b62c8fa99 Mon Sep 17 00:00:00 2001
+From: Orr Mazor <orrx.mazor@intel.com>
+Date: Tue, 8 Sep 2020 08:24:45 +0300
+Subject: [PATCH] WLANRTSYS-26046 - Support single hostapd over multi radios
+
+This is needed so netifd will not restart hostapd if only a single interface
+has changed on shared hostapd, but rather call the scripts to detach this
+radio from hostapd
+
+Signed-off-by: Michael Vassernis <michaelx.vassernis@intel.com>
+Signed-off-by: Orr Mazor <orrx.mazor@intel.com>
+---
+ wireless.c | 48 ++++++++++++++++++++++++++++++++++++++++++++----
+ wireless.h |  1 +
+ 2 files changed, 45 insertions(+), 4 deletions(-)
+
+--- a/wireless.c
++++ b/wireless.c
+@@ -180,6 +180,39 @@ wireless_close_script_proc_fd(struct wir
+ }
+ 
+ static void
++wireless_device_detach_from_shared_proc(struct wireless_device *wdev,
++					struct wireless_process *proc)
++{
++	const char *argv[8];
++	char *config;
++	char pid_str[8] = { 0 };
++	int i = 0;
++
++	D(WIRELESS, "Wireless device '%s' detach from shared pid %d\n", wdev->name, proc->pid);
++	if (wdev->prev_config) {
++		config = blobmsg_format_json(wdev->prev_config, true);
++	} else {
++		prepare_config(wdev, &b, false);
++		config = blobmsg_format_json(b.head, true);
++	}
++
++	snprintf(pid_str, sizeof(pid_str), "%i", proc->pid);
++
++	argv[i++] = wdev->drv->script;
++	argv[i++] = wdev->drv->name;
++	argv[i++] = "detach";
++	argv[i++] = wdev->name;
++	argv[i++] = proc->exe;
++	argv[i++] = pid_str;
++	argv[i++] = config;
++	argv[i] = NULL;
++
++	netifd_start_process(argv, NULL, &wdev->script_task);
++
++	free(config);
++}
++
++static void
+ wireless_process_kill_all(struct wireless_device *wdev, int signal, bool free)
+ {
+ 	struct wireless_process *proc, *tmp;
+@@ -188,8 +221,12 @@ wireless_process_kill_all(struct wireles
+ 		bool check = wireless_process_check(proc);
+ 
+ 		if (check) {
+-			D(WIRELESS, "Wireless device '%s' kill pid %d\n", wdev->name, proc->pid);
+-			kill(proc->pid, signal);
++			if (proc->shared) {
++				wireless_device_detach_from_shared_proc(wdev, proc);
++			} else {
++				D(WIRELESS, "Wireless device '%s' kill pid %d\n", wdev->name, proc->pid);
++				kill(proc->pid, signal);
++			}
+ 		}
+ 
+ 		if (free || !check)
+@@ -273,8 +310,6 @@ wireless_device_run_handler(struct wirel
+ 	D(WIRELESS, "Wireless device '%s' run %s handler\n", wdev->name, action);
+ 	if (!up && wdev->prev_config) {
+ 		config = blobmsg_format_json(wdev->prev_config, true);
+-		free(wdev->prev_config);
+-		wdev->prev_config = NULL;
+ 	} else {
+ 		prepare_config(wdev, &b, up);
+ 		config = blobmsg_format_json(b.head, true);
+@@ -1157,12 +1192,14 @@ wireless_device_add_process(struct wirel
+ 		PROC_ATTR_PID,
+ 		PROC_ATTR_EXE,
+ 		PROC_ATTR_REQUIRED,
++		PROC_ATTR_SHARED,
+ 		__PROC_ATTR_MAX
+ 	};
+ 	static const struct blobmsg_policy proc_policy[__PROC_ATTR_MAX] = {
+ 		[PROC_ATTR_PID] = { .name = "pid", .type = BLOBMSG_TYPE_INT32 },
+ 		[PROC_ATTR_EXE] = { .name = "exe", .type = BLOBMSG_TYPE_STRING },
+ 		[PROC_ATTR_REQUIRED] = { .name = "required", .type = BLOBMSG_TYPE_BOOL },
++		[PROC_ATTR_SHARED] = { .name = "shared", .type = BLOBMSG_TYPE_BOOL },
+ 	};
+ 	struct blob_attr *tb[__PROC_ATTR_MAX];
+ 	struct wireless_process *proc;
+@@ -1189,6 +1226,9 @@ wireless_device_add_process(struct wirel
+ 	if (tb[PROC_ATTR_REQUIRED])
+ 		proc->required = blobmsg_get_bool(tb[PROC_ATTR_REQUIRED]);
+ 
++	if (tb[PROC_ATTR_SHARED])
++		proc->shared = blobmsg_get_bool(tb[PROC_ATTR_SHARED]);
++
+ 	D(WIRELESS, "Wireless device '%s' add pid %d\n", wdev->name, proc->pid);
+ 	list_add(&proc->list, &wdev->script_proc);
+ 	uloop_timeout_set(&wdev->script_check, 0);
+--- a/wireless.h
++++ b/wireless.h
+@@ -96,6 +96,7 @@ struct wireless_process {
+ 	int pid;
+ 
+ 	bool required;
++	bool shared;
+ };
+ 
+ void wireless_device_create(struct wireless_driver *drv, const char *name, struct blob_attr *data);

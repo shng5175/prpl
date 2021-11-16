@@ -1,0 +1,62 @@
+Store wlan interfaces in ascending order using vap index in avl tree
+
+As earlier wlan interfaces ordering was done in lexicographical
+manner which is casuing in bringing up vap with higher index comes first
+which is not expected, it should be in ascending order
+
+--- a/wireless.c
++++ b/wireless.c
+@@ -69,6 +69,21 @@ static const struct uci_blob_param_list
+ 	.params = vif_policy,
+ };
+ 
++int
++avl_cmpifname(const void *k1, const void *k2, void *ptr)
++{
++	char *token1;
++	char *token2;
++
++	token1 = strrchr(k1, '.');
++	token2 = strrchr(k2, '.');
++	if (token1 && token2) {
++		return (atoi(token1 + 1) - atoi(token2 + 1));
++	} else {
++		return strcmp(k1, k2);
++	}
++}
++
+ static void
+ put_container(struct blob_buf *buf, struct blob_attr *attr, const char *name)
+ {
+@@ -818,11 +833,11 @@ wireless_add_handler(const char *script,
+ 
+ void wireless_init(void)
+ {
+-	vlist_init(&wireless_devices, avl_strcmp, wdev_update);
++	vlist_init(&wireless_devices, avl_cmpifname, wdev_update);
+ 	wireless_devices.keep_old = true;
+ 	wireless_devices.no_delete = true;
+ 
+-	avl_init(&wireless_drivers, avl_strcmp, false, NULL);
++	avl_init(&wireless_drivers, avl_cmpifname, false, NULL);
+ 	drv_fd = netifd_open_subdir("wireless");
+ 	if (drv_fd < 0)
+ 		return;
+@@ -1034,7 +1049,7 @@ wireless_device_create(struct wireless_d
+ 	wdev->autostart = true;
+ 	wdev->update_block = false;
+ 	INIT_LIST_HEAD(&wdev->script_proc);
+-	vlist_init(&wdev->interfaces, avl_strcmp, vif_update);
++	vlist_init(&wdev->interfaces, avl_cmpifname, vif_update);
+ 	wdev->interfaces.keep_old = true;
+ 
+ 	wdev->timeout.cb = wireless_device_setup_timeout;
+--- a/wireless.h
++++ b/wireless.h
+@@ -110,5 +110,6 @@ int wireless_device_notify(struct wirele
+ 
+ void wireless_start_pending(void);
+ void wireless_init(void);
++int avl_cmpifname(const void *k1, const void *k2, void *ptr);
+ 
+ #endif
