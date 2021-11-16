@@ -81,6 +81,8 @@ def load_yaml(fname: str, profile: dict):
                 if not f.get("feed") or not f.get("packages"):
                     die(f"Found bad additional_packages {f}")
             profile["additional_packages"].extend(new.get(n))
+        elif n == "use_default_feeds":
+            profile["use_default_feeds"] = new.get(n)
 
     return profile
 
@@ -111,6 +113,7 @@ if "clean" in sys.argv:
     quit(0)
 
 profile = {
+    "use_default_feeds": True,
     "additional_packages": [],
     "description": [],
     "diffconfig": "",
@@ -133,11 +136,12 @@ if feeds_conf.is_file():
 
 feeds = []
 
-with open("feeds.conf.default", "r") as default_feeds:
-    for line in default_feeds:
-        feed = line.rstrip()
-        print(f"Adding default feed '{feed}'")
-        feeds.append(feed.replace(" ", ","))
+if profile["use_default_feeds"]:
+    with open("feeds.conf.default", "r") as default_feeds:
+        for line in default_feeds:
+            feed = line.rstrip()
+            print(f"Adding default feed '{feed}'")
+            feeds.append(feed.replace(" ", ","))
 
 for p in profile.get("feeds", []):
     try:
