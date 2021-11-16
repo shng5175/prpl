@@ -162,7 +162,7 @@ if run(["./scripts/feeds", "update"]).returncode:
 
 for p in profile.get("feeds"):
     f = profile["feeds"].get(p)
-    if f.get("packages"):
+    if f.get("packages") and not f.get("install_all_packages", False):
         feed = f.get("name")
         for package in f.get("packages"):
             print(f"Installing {package} from {feed}")
