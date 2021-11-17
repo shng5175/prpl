@@ -9,7 +9,7 @@
   rules:
     - if: '$CI_PIPELINE_SOURCE == "schedule"'
       when: never
-    - if: '$CI_COMMIT_BRANCH == $CI_DESIGNATED_BRANCH'
+    - if: '$CI_COMMIT_BRANCH == "prplos-acceleration-plan"'
     - when: manual
   before_script:
     - touch .build_failed
