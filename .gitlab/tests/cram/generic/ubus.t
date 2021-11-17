@@ -104,6 +104,12 @@ Check that ubus has expected datamodels available:
   X_Prpl_PersistentConfiguration.Config.Security
   X_Prpl_PersistentConfiguration.Service
 
+Check that we've correct bridge aliases:
+
+  $ R "ubus call Bridging _get \"{'rel_path':'Bridge.*.Alias'}\" | jsonfilter -e @[*].Alias | sort"
+  guest
+  lan
+
 Check that we've correct hostname and release info:
 
   $ R "ubus -S call system board | jsonfilter -e '@.hostname' -e '@.release.distribution'"
