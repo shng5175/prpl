@@ -110,6 +110,34 @@ Check that we've correct bridge aliases:
   guest
   lan
 
+Check that we've correct DHCP pool settings:
+
+  $ R "ubus call DHCPv4.Server.Pool _get \"{'rel_path':'*'}\" | grep -E '(Alias|MinAddres|MaxAddress|Enable|Servers|Status)' | sort"
+  \t\t"Alias": "guest", (esc)
+  \t\t"Alias": "lan", (esc)
+  \t\t"DNSServers": "192.168.1.1", (esc)
+  \t\t"DNSServers": "192.168.2.1", (esc)
+  \t\t"Enable": true, (esc)
+  \t\t"Enable": true, (esc)
+  \t\t"MaxAddress": "192.168.1.249", (esc)
+  \t\t"MaxAddress": "192.168.2.249", (esc)
+  \t\t"MinAddress": "192.168.1.100", (esc)
+  \t\t"MinAddress": "192.168.2.100", (esc)
+  \t\t"Status": "Enabled", (esc)
+  \t\t"Status": "Enabled", (esc)
+
+  $ R "ubus call DHCPv6.Server.Pool _get \"{'rel_path':'*'}\" | grep -E '(Alias|Enable|Status)' | sort"
+  \t\t"Alias": "guest", (esc)
+  \t\t"Alias": "lan", (esc)
+  \t\t"Enable": false, (esc)
+  \t\t"Enable": true, (esc)
+  \t\t"IANAEnable": false, (esc)
+  \t\t"IANAEnable": false, (esc)
+  \t\t"IAPDEnable": false, (esc)
+  \t\t"IAPDEnable": false, (esc)
+  \t\t"Status": "Disabled", (esc)
+  \t\t"Status": "Enabled", (esc)
+
 Check that we've correct hostname and release info:
 
   $ R "ubus -S call system board | jsonfilter -e '@.hostname' -e '@.release.distribution'"
