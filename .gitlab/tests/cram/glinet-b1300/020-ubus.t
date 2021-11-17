@@ -96,3 +96,42 @@ Check that NAT.Interface provides expected output:
   br-lan
   br-guest
   eth1
+
+Check that NetDev.Link provides expected output:
+
+  $ R "ubus call NetDev _get '{\"rel_path\":\"Link.\",\"depth\":100}' | jsonfilter -e @[*].Name -e @[*].Flags -e @[*].Type | sed '/^$/d' | sort"
+  br-guest
+  br-lan
+  broadcast multicast
+  broadcast multicast
+  eth0
+  eth1
+  ether
+  ether
+  ether
+  ether
+  ether
+  ether
+  lo
+  loopback
+  permanent
+  permanent
+  permanent
+  permanent
+  permanent
+  permanent
+  permanent
+  unicast
+  unicast
+  unicast
+  unicast
+  unicast
+  unicast
+  unreachable
+  up broadcast
+  up broadcast
+  up broadcast multicast
+  up broadcast multicast
+  up loopback
+  wlan0
+  wlan1
