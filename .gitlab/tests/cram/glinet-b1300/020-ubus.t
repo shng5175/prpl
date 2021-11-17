@@ -135,3 +135,19 @@ Check that NetDev.Link provides expected output:
   up loopback
   wlan0
   wlan1
+
+Check that NetModel.Intf provides expected output:
+
+  $ R "ubus call NetModel _get '{\"rel_path\":\"Intf.\",\"depth\":100}' | jsonfilter -e @[*].Alias -e @[*].Flags -e @[*].Name -e @[*].Status | sort"
+  false
+  false
+  false
+  ipv4
+  ipv4
+  ipv4
+  lan
+  lan
+  loopback
+  loopback
+  wan
+  wan
