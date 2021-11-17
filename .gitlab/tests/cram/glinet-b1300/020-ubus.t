@@ -8,3 +8,6 @@ Check that we've correct system info:
   ARMv7 Processor rev 5 (v7l)
   GL.iNet GL-B1300
   glinet,gl-b1300
+
+  $ R "ubus call DeviceInfo _get | jsonfilter -e '@[\"DeviceInfo.\"].ProductClass'"
+  GL.iNet GL-B1300
