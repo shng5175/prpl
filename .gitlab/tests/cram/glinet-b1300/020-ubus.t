@@ -55,3 +55,34 @@ Check that we've correct ethernet link details:
   \t\t"Name": "br-lan", (esc)
   \t\t"Name": "eth0", (esc)
   \t\t"Name": "lo", (esc)
+
+Check that IP.Interface provides expected output:
+
+  $ R "ubus call IP _get '{\"rel_path\":\"Interface.\",\"depth\":100}' | jsonfilter -e @[*].Alias -e @[*].Name -e @[*].Status -e @[*].IPAddress -e @[*].SubnetMask | sort"
+  127.0.0.1
+  192.168.1.1
+  192.168.2.1
+  255.0.0.0
+  255.255.255.0
+  255.255.255.0
+  ::1
+  Disabled
+  Down
+  Enabled
+  Enabled
+  Enabled
+  Up
+  Up
+  Up
+  br-guest
+  br-lan
+  eth0
+  guest
+  guest
+  lan
+  lan
+  lo
+  loopback
+  loopback_ipv4
+  loopbackipv6
+  wan
