@@ -11,3 +11,14 @@ Check that we've correct system info:
 
   $ R "ubus call DeviceInfo _get | jsonfilter -e '@[\"DeviceInfo.\"].ProductClass'"
   GL.iNet GL-B1300
+
+Check that we've correct bridge port aliases:
+
+  $ R "ubus call Bridging _get \"{'rel_path':'Bridge.*.Port.*.Alias'}\" | jsonfilter -e @[*].Alias | sort"
+  ETH0
+  GUEST
+  bridge
+  default_wlan0
+  default_wlan1
+  guest_wlan0
+  guest_wlan1
