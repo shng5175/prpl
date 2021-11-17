@@ -154,6 +154,18 @@ Check that aclmanager has expected setup:
   guest
   operator
 
+Check that Users.Role component has expected setup:
+
+  $ R "ubus call Users.Role _get '{\"rel_path\":\"\"}' | jsonfilter -e @[*].Alias -e @[*].RoleName | sort"
+  acl
+  acl-role
+  admin
+  admin-role
+  guest
+  guest-role
+  linux-role
+  linux-user
+
 Check that we've correct hostname and release info:
 
   $ R "ubus -S call system board | jsonfilter -e '@.hostname' -e '@.release.distribution'"
