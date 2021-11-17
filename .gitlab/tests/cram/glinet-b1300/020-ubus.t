@@ -86,3 +86,13 @@ Check that IP.Interface provides expected output:
   loopback_ipv4
   loopbackipv6
   wan
+
+Check that NAT.Interface provides expected output:
+
+  $ R "ubus call NAT _get '{\"rel_path\":\"InterfaceSetting.\",\"depth\":100}' | jsonfilter -e @[*].Alias -e @[*].Interface"
+  lan
+  guest
+  wan
+  br-lan
+  br-guest
+  eth1
