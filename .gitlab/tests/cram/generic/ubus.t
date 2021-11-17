@@ -146,6 +146,14 @@ Check that we've correct time:
   $ test "$time" = "$sys" && echo "Time is OK"
   Time is OK
 
+Check that aclmanager has expected setup:
+
+  $ R "ubus call ACLManager.Role _get '{\"rel_path\":\"*\"}' | jsonfilter -e @[*].Name -e @[*].Alias | sort"
+  cpe-Role-1
+  cpe-Role-2
+  guest
+  operator
+
 Check that we've correct hostname and release info:
 
   $ R "ubus -S call system board | jsonfilter -e '@.hostname' -e '@.release.distribution'"
