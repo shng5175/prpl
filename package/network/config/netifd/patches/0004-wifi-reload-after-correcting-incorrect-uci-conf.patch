@@ -1,0 +1,19 @@
+Subject: Fix for WiFi reload after correcting incorrect UCI conf
+
+Due to wrong WiFi configuration, retry_setup_failed becomes true
+which restricts to reload when giving correct WiFi configuration
+
+So, needs to set retry_setup_failed as false on each config reload
+
+Signed-off-by: Prasun Maiti <pmaiti@maxlinear.com>
+
+--- a/wireless.c
++++ b/wireless.c
+@@ -453,6 +453,7 @@ void
+ wireless_device_set_up(struct wireless_device *wdev)
+ {
+ 	wdev->retry = WIRELESS_SETUP_RETRY;
++	wdev->retry_setup_failed = false;
+ 	wdev->autostart = true;
+ 	__wireless_device_set_up(wdev, 0);
+ }
