@@ -66,6 +66,8 @@
 #define	FALSE		0
 #endif
 
+//Remove this line
+
 /* The name of the program.
  */
 static char const	*progname;
