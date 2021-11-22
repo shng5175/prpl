@@ -8,7 +8,6 @@ feeds:
 
 packages:
   - obuspa
-  - owsd
   - u80211d
   - ucwmp
   - umdns

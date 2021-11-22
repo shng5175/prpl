@@ -42,7 +42,6 @@
     CI_COVERITY_PRPLOS_PACKAGE_LIST: >
       bbfd
       obuspa
-      owsd
       prplmesh
       ucwmp
 
