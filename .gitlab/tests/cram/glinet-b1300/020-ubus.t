@@ -28,32 +28,24 @@ Check that we've correct ethernet interface details:
   $ R "ubus call Ethernet _get \"{'rel_path':'Interface.'}\" | grep -E '(Alias|Enable|Name)' | sort"
   \t\t"Alias": "ETH0", (esc)
   \t\t"Alias": "ETH1", (esc)
-  \t\t"Alias": "ETH2", (esc)
-  \t\t"Alias": "ETH3", (esc)
   \t\t"EEEEnable": false, (esc)
   \t\t"EEEEnable": false, (esc)
-  \t\t"EEEEnable": false, (esc)
-  \t\t"EEEEnable": false, (esc)
-  \t\t"Enable": true, (esc)
-  \t\t"Enable": true, (esc)
   \t\t"Enable": true, (esc)
   \t\t"Enable": true, (esc)
   \t\t"Name": "eth0", (esc)
   \t\t"Name": "eth1", (esc)
-  \t\t"Name": "eth2", (esc)
-  \t\t"Name": "eth3", (esc)
 
 Check that we've correct ethernet link details:
 
   $ R "ubus call Ethernet _get \"{'rel_path':'Link.'}\" | grep -E '(Alias|Enable|Name)' | sort"
-  \t\t"Alias": "ETH0", (esc)
+  \t\t"Alias": "ETH1", (esc)
   \t\t"Alias": "LAN", (esc)
   \t\t"Alias": "LO", (esc)
   \t\t"Enable": true, (esc)
   \t\t"Enable": true, (esc)
   \t\t"Enable": true, (esc)
   \t\t"Name": "br-lan", (esc)
-  \t\t"Name": "eth0", (esc)
+  \t\t"Name": "eth1", (esc)
   \t\t"Name": "lo", (esc)
 
 Check that IP.Interface provides expected output:

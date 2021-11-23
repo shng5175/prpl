@@ -1,0 +1,11 @@
+%populate {                                           
+    object Ethernet.Interface {                       
+        instance add(Alias = "ETH1", Name = "eth1") { 
+            parameter Upstream = "true";              
+            parameter Enable = "true";                
+        }                                             
+        instance add("ETH0", Name = "eth0") {         
+            parameter Enable = "true";                
+        }                                                                                       
+    } 
+}
