@@ -131,9 +131,45 @@ Check that NetDev.Link provides expected output:
 Check that NetModel.Intf provides expected output:
 
   $ R "ubus call NetModel _get '{\"rel_path\":\"Intf.\",\"depth\":100}' | jsonfilter -e @[*].Alias -e @[*].Flags -e @[*].Name -e @[*].Status | sort"
+  ethIntf-ETH0
+  ethIntf-ETH0
+  ethIntf-ETH1
+  ethIntf-ETH1
+  ethLink-ETH1
+  ethLink-ETH1
+  ethLink-LAN
+  ethLink-LAN
+  ethLink-LO
+  ethLink-LO
+  eth_intf
+  eth_intf
+  eth_link
+  eth_link
+  eth_link
   false
   false
   false
+  false
+  false
+  false
+  false
+  false
+  false
+  false
+  false
+  false
+  ip
+  ip
+  ip
+  ip
+  ip-guest
+  ip-guest
+  ip-lan
+  ip-lan
+  ip-loopback
+  ip-loopback
+  ip-wan
+  ip-wan
   ipv4
   ipv4
   ipv4
