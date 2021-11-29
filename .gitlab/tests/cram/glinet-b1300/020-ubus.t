@@ -50,7 +50,7 @@ Check that we've correct ethernet link details:
 
 Check that IP.Interface provides expected output:
 
-  $ R "ubus call IP _get '{\"rel_path\":\"Interface.\",\"depth\":100}' | jsonfilter -e @[*].Alias -e @[*].Name -e @[*].Status -e @[*].IPAddress -e @[*].SubnetMask | sort"
+  $ R "ubus call IP _get '{\"rel_path\":\"Interface.\",\"depth\":100}' | jsonfilter -e @[*].Alias -e @[*].Name -e @[*].Status -e @[*].IPAddress -e @[*].SubnetMask | sort" | egrep -v '^f[0-9a-z:]+'
   127.0.0.1
   192.168.1.1
   192.168.2.1
@@ -59,10 +59,26 @@ Check that IP.Interface provides expected output:
   255.255.255.0
   ::1
   Disabled
+  Disabled
+  Disabled
+  Disabled
+  Disabled
+  Disabled
+  Disabled
+  Disabled
+  Disabled
   Down
   Enabled
   Enabled
   Enabled
+  GUA
+  GUA
+  GUA_IAPD
+  GUA_IAPD
+  GUA_RA
+  GUA_RA
+  ULA
+  ULA64
   Up
   Up
   Up
@@ -131,9 +147,62 @@ Check that NetDev.Link provides expected output:
 Check that NetModel.Intf provides expected output:
 
   $ R "ubus call NetModel _get '{\"rel_path\":\"Intf.\",\"depth\":100}' | jsonfilter -e @[*].Alias -e @[*].Flags -e @[*].Name -e @[*].Status | sort"
+  bridge
+  bridge
+  bridge-GUEST
+  bridge-GUEST
+  bridge-bridge
+  bridge-bridge
+  ethIntf-ETH0
+  ethIntf-ETH0
+  ethIntf-ETH1
+  ethIntf-ETH1
+  ethLink-ETH1
+  ethLink-ETH1
+  ethLink-LAN
+  ethLink-LAN
+  ethLink-LO
+  ethLink-LO
+  eth_intf
+  eth_intf
+  eth_link
+  eth_link
+  eth_link
   false
   false
   false
+  false
+  false
+  false
+  false
+  false
+  false
+  false
+  false
+  false
+  false
+  false
+  false
+  false
+  false
+  false
+  false
+  false
+  guest
+  guest
+  ip netdev
+  ip netdev
+  ip netdev
+  ip netdev
+  ip-guest
+  ip-guest
+  ip-lan
+  ip-lan
+  ip-loopback
+  ip-loopback
+  ip-wan
+  ip-wan
+  ipv4
   ipv4
   ipv4
   ipv4
@@ -141,5 +210,20 @@ Check that NetModel.Intf provides expected output:
   lan
   loopback
   loopback
+  port
+  port
+  port
+  port
+  port
+  port-ETH0
+  port-ETH0
+  port-default_wlan0
+  port-default_wlan0
+  port-default_wlan1
+  port-default_wlan1
+  port-guest_wlan0
+  port-guest_wlan0
+  port-guest_wlan1
+  port-guest_wlan1
   wan
   wan

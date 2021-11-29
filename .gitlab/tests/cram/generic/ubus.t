@@ -97,12 +97,12 @@ Check that ubus has expected datamodels available:
   Users.Role
   Users.SupportedShell
   Users.User
+  X_PRPL-COM_PersistentConfiguration
+  X_PRPL-COM_PersistentConfiguration.Config
+  X_PRPL-COM_PersistentConfiguration.Config.Security
+  X_PRPL-COM_PersistentConfiguration.Service
   X_PRPL_WANManager
   X_PRPL_WANManager.WAN
-  X_Prpl_PersistentConfiguration
-  X_Prpl_PersistentConfiguration.Config
-  X_Prpl_PersistentConfiguration.Config.Security
-  X_Prpl_PersistentConfiguration.Service
 
 Check that we've correct bridge aliases:
 
@@ -129,13 +129,13 @@ Check that we've correct DHCP pool settings:
   $ R "ubus call DHCPv6.Server.Pool _get \"{'rel_path':'*'}\" | grep -E '(Alias|Enable|Status)' | sort"
   \t\t"Alias": "guest", (esc)
   \t\t"Alias": "lan", (esc)
-  \t\t"Enable": false, (esc)
+  \t\t"Enable": true, (esc)
   \t\t"Enable": true, (esc)
   \t\t"IANAEnable": false, (esc)
   \t\t"IANAEnable": false, (esc)
   \t\t"IAPDEnable": false, (esc)
   \t\t"IAPDEnable": false, (esc)
-  \t\t"Status": "Disabled", (esc)
+  \t\t"Status": "Enabled", (esc)
   \t\t"Status": "Enabled", (esc)
 
 Check that we've correct time:
@@ -149,8 +149,10 @@ Check that we've correct time:
 Check that aclmanager has expected setup:
 
   $ R "ubus call ACLManager.Role _get '{\"rel_path\":\"*\"}' | jsonfilter -e @[*].Name -e @[*].Alias | sort"
+  admin
   cpe-Role-1
   cpe-Role-2
+  cpe-Role-3
   guest
   operator
 
@@ -163,8 +165,6 @@ Check that Users.Role component has expected setup:
   admin-role
   guest
   guest-role
-  linux-role
-  linux-user
 
 Check that we've correct hostname and release info:
 
