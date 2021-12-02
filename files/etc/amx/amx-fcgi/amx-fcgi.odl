@@ -1,0 +1,17 @@
+%config {
+    // Application name
+    name = "amx-fcgi";
+
+    fcgi-socket = "$(LIGHTTPD_CHROOT)/var/run/amx-fcgi.sock";
+    username = "$(LIGHTTPD_USER)";
+    acl = {
+        disable = true,
+        path = "/etc/acl/merged/"
+    };
+}
+
+import "${name}.so" as "${name}";
+
+%define {
+    entry-point amx-fcgi.amx_fcgi_main;
+}
