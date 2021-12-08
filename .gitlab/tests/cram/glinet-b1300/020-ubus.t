@@ -215,8 +215,11 @@ Check that NetModel.Intf provides expected output:
   port
   port
   port
+  port
   port-ETH0
   port-ETH0
+  port-ETH1
+  port-ETH1
   port-default_wlan0
   port-default_wlan0
   port-default_wlan1
