@@ -11,12 +11,15 @@ RUN \
 	iputils-ping \
 	iproute2 \
 	locales \
+	netcat-openbsd \
 	nmap \
 	openssh-client \
 	python3 \
 	python3-pip \
 	python3-setuptools \
+	sshpass \
 	sudo \
+	tcpdump \
 	xz-utils && \
     apt-get -y autoremove && \
     apt-get clean && \
