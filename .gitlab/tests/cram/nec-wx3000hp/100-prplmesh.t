@@ -6,24 +6,23 @@ Start wireless:
 
   $ R logger -t cram "Start wireless"
   $ R "uci set wireless.radio0.disabled='0'; uci set wireless.radio2.disabled='0'; uci commit; wifi up"
-  $ sleep 180
+  $ sleep 60
 
 Check that hostapd & supplicant proccess are up after wireless startup:
 
   $ R logger -t cram "Check that hostapd \& supplicant proccess are up after wireless startup"
 
   $ R "ps w" | sed -nE 's/.*(\/usr\/sbin\/hostapd.*)/\1/p' | LC_ALL=C sort
-  /usr/sbin/hostapd -s -P /var/run/wifi-phy0.pid -B /var/run/hostapd-phy0.conf
-  /usr/sbin/hostapd -s -P /var/run/wifi-phy1.pid -B /var/run/hostapd-phy1.conf
+  /usr/sbin/hostapd -s -g /var/run/hostapd/global-hostapd -P /var/run/wifi-global-hostapd.pid -B /var/run/h
 
   $ R "ps w" | sed -nE 's/.*(\/usr\/sbin\/wpa_supplicant.*)/\1/p' | LC_ALL=C sort
-  /usr/sbin/wpa_supplicant -B -b br-lan -P /var/run/wpa_supplicant-wlan1.pid -D nl80211 -i wlan1 -c /var/ru
-  /usr/sbin/wpa_supplicant -B -b br-lan -P /var/run/wpa_supplicant-wlan3.pid -D nl80211 -i wlan3 -c /var/ru
+  /usr/sbin/wpa_supplicant -B -P /var/run/wpa_supplicant-wlan1.pid -D nl80211 -i wlan1 -c /var/run/wpa_supp
+  /usr/sbin/wpa_supplicant -B -P /var/run/wpa_supplicant-wlan3.pid -D nl80211 -i wlan3 -c /var/run/wpa_supp
 
 Restart prplmesh:
 
   $ R logger -t cram "Restart prplmesh"
-  $ R "/etc/init.d/prplmesh gateway_mode > /dev/null 2>&1 && sleep 180"
+  $ R "/etc/init.d/prplmesh gateway_mode > /dev/null 2>&1 && sleep 60"
 
 Check VAP setup:
 
