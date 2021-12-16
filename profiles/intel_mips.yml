@@ -10,8 +10,8 @@ description: Build images for the Intel MIPS devices - Axepoint and NEC(Asurada)
 feeds:
   - name: feed_intel
     uri: https://gitlab.com/prpl-foundation/prplOS/feed-intel.git
-    tracking_branch: ugw-8.5.2-cleanup
-    revision: 8838cb8d33161c901f0d8b0d841dc8655db6403b
+    tracking_branch: dev/ugw-8.5.2-cleanup-netifd-ugw-porting
+    revision: 38991b3c114bb4d27414fb08db948d005acb0fa2
 
 packages:
   - dwpal_6x-uci
@@ -102,4 +102,5 @@ diffconfig: |
   CONFIG_OPENSSL_WITH_SRP=y
   CONFIG_OPENSSL_WITH_TLS13=y
   CONFIG_WIRELESS_STA=y
+  CONFIG_PACKAGE_netifd-ugw=y
 
