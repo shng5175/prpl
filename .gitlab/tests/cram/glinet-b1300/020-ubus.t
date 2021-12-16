@@ -129,6 +129,8 @@ Check that NetDev.Link provides expected output:
   permanent
   permanent
   permanent
+  permanent
+  unicast
   unicast
   unicast
   unicast
@@ -168,6 +170,7 @@ Check that NetModel.Intf provides expected output:
   eth_link
   eth_link
   eth_link
+  false
   false
   false
   false
