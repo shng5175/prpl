@@ -6,7 +6,7 @@ Start wireless:
 
   $ R logger -t cram "Start wireless"
   $ R "uci set wireless.radio0.disabled='0'; uci set wireless.radio2.disabled='0'; uci commit; wifi up"
-  $ sleep 60
+  $ sleep 120
 
 Check that hostapd & supplicant proccess are up after wireless startup:
 
@@ -22,7 +22,7 @@ Check that hostapd & supplicant proccess are up after wireless startup:
 Restart prplmesh:
 
   $ R logger -t cram "Restart prplmesh"
-  $ R "/etc/init.d/prplmesh gateway_mode > /dev/null 2>&1 && sleep 60"
+  $ R "/etc/init.d/prplmesh gateway_mode > /dev/null 2>&1 && sleep 120"
 
 Check VAP setup:
 
