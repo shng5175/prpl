@@ -4,7 +4,7 @@ feeds:
   - name: feed_prpl
     uri: https://gitlab.com/prpl-foundation/prplOS/feed-prpl.git
     tracking_branch: prplos
-    revision: f23f48cca3aaac936110676e64def833def5e322
+    revision: 58cb9f5c74d5ea5131b725d532f14a06f5443b1c
 
 additional_packages:
   - feed: packages
@@ -44,6 +44,7 @@ packages:
   - tr181-dhcpv6client
   - tr181-firewall
   - tr181-usermanagement
+  - tr069-manager
   - u80211d
   - ucwmp
   - umdns
