@@ -11,7 +11,7 @@ feeds:
   - name: feed_intel
     uri: https://gitlab.com/prpl-foundation/prplOS/feed-intel.git
     tracking_branch: ugw-8.5.2-cleanup
-    revision: 8838cb8d33161c901f0d8b0d841dc8655db6403b
+    revision: 8dfdcadae0a2282a4f151552174e2d347336ca6a 
 
 packages:
   - dwpal_6x-uci
@@ -102,4 +102,5 @@ diffconfig: |
   CONFIG_OPENSSL_WITH_SRP=y
   CONFIG_OPENSSL_WITH_TLS13=y
   CONFIG_WIRELESS_STA=y
+  CONFIG_PACKAGE_netifd-ugw=y
 
