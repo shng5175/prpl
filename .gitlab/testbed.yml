@@ -46,7 +46,6 @@
     - ssh root@$TARGET_LAN_IP "ubus call system board" | tee system-$LABGRID_TARGET.json
 
   script:
-    - sudo apt-get update && sudo apt-get install netcat-openbsd tcpdump sshpass
     - sleep $DUT_SLEEP_AFTER_BOOT
     - set -o pipefail
     - python3 -m cram --verbose $CRAM_TEST_SUITE $CRAM_TEST_SUITE_EXTRA | tee cram-result-$LABGRID_TARGET.txt
