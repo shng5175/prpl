@@ -4,7 +4,7 @@ feeds:
   - name: feed_prpl
     uri: https://gitlab.com/prpl-foundation/prplOS/feed-prpl.git
     tracking_branch: prplos
-    revision: f23f48cca3aaac936110676e64def833def5e322
+    revision: 7306afa1e0ef0a5dbe2b0f40c49ad1caf61268f2
 
 additional_packages:
   - feed: packages
@@ -38,6 +38,7 @@ packages:
   - prplmesh
   - routing-manager
   - time-manager
+  - tr069-manager
   - tr181-bridging
   - tr181-device
   - tr181-dhcpv4client
