@@ -25,8 +25,10 @@ Check VAP setup after restart:
 
   $ R logger -t cram "Check VAP setup after restart"
   $ R "iwinfo | grep ESSID"
-  wlan0     ESSID: "OpenWrt"
-  wlan1     ESSID: "OpenWrt"
+  wlan0     ESSID: "prplOS"
+  wlan0-1   ESSID: "prplOS-guest"
+  wlan1     ESSID: "prplOS"
+  wlan1-1   ESSID: "prplOS-guest"
 
 Check that prplmesh processes are running:
 
@@ -65,5 +67,7 @@ Check that prplmesh is in operational state:
   bml_nw_map_query: return value is: BML_RET_OK, Success status
   wlan0
   wlan0.0
+  wlan0.1
   wlan1
   wlan1.0
+  wlan1.1
