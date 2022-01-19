@@ -6,6 +6,7 @@ include:
   - local: .gitlab/cdrouter.yml
   - local: .gitlab/testbed.yml
   - local: .gitlab/testbed/glinet-b1300.yml
+  - local: .gitlab/testbed/turris-omnia.yml
 
 stages:
   - build
@@ -15,14 +16,29 @@ stages:
 build test ipq40xx prpl webui:
   extends: .build test config
 
+build test mvebu prpl webui:
+  extends: .build test config
+
 run test Gl.iNet B1300 with system on initramfs:
   dependencies:
     - build test ipq40xx prpl webui
   extends: .glinet-b1300 testbed
+
+run test Turris Omnia with system on initramfs:
+  dependencies:
+    - build test mvebu prpl webui
+  extends: .turris-omnia testbed
 
 CDRouter simple-arp-tests package on Gl.iNet B1300 with system on initramfs:
   dependencies:
     - build test ipq40xx prpl webui
   extends:
     - .glinet-b1300 testbed
+    - .cdrouter
+
+CDRouter simple-arp-tests package on Turris Omnia with system on initramfs:
+  dependencies:
+    - build test mvebu prpl webui
+  extends:
+    - .turris-omnia testbed
     - .cdrouter
