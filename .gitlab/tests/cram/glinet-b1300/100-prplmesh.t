@@ -5,7 +5,7 @@ Create R alias:
 Start wireless:
 
   $ R logger -t cram "Start wireless"
-  $ R "uci set wireless.wlan0.disabled='0'; uci set wireless.wlan1.disabled='0'; uci commit; wifi up"
+  $ R "uci set wireless.radio0.disabled='0'; uci set wireless.radio1.disabled='0'; uci commit; wifi up"
   $ sleep 30
 
 Check that hostapd is operating after reboot:
@@ -25,10 +25,10 @@ Check VAP setup after restart:
 
   $ R logger -t cram "Check VAP setup after restart"
   $ R "iwinfo | grep ESSID"
-  wlan0     ESSID: "PrplOs"
-  wlan0-1   ESSID: "PrplOs-guest"
-  wlan1     ESSID: "PrplOs"
-  wlan1-1   ESSID: "PrplOs-guest"
+  wlan0     ESSID: "prplOS"
+  wlan0-1   ESSID: "prplOS-guest"
+  wlan1     ESSID: "prplOS"
+  wlan1-1   ESSID: "prplOS-guest"
 
 Check that prplmesh processes are running:
 

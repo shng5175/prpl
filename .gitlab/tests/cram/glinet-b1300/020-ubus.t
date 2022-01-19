@@ -20,6 +20,8 @@ Check that we've correct bridge port aliases:
   bridge
   default_wlan0
   default_wlan1
+  guest_radio0
+  guest_radio1
   guest_wlan0
   guest_wlan1
 
@@ -130,6 +132,8 @@ Check that NetDev.Link provides expected output:
   permanent
   permanent
   permanent
+  permanent
+  unicast
   unicast
   unicast
   unicast
@@ -191,6 +195,8 @@ Check that NetModel.Intf provides expected output:
   false
   false
   false
+  false
+  false
   guest
   guest
   ip netdev
@@ -219,6 +225,8 @@ Check that NetModel.Intf provides expected output:
   port
   port
   port
+  port
+  port
   port-ETH0
   port-ETH0
   port-ETH1
@@ -227,6 +235,10 @@ Check that NetModel.Intf provides expected output:
   port-default_wlan0
   port-default_wlan1
   port-default_wlan1
+  port-guest_radio0
+  port-guest_radio0
+  port-guest_radio1
+  port-guest_radio1
   port-guest_wlan0
   port-guest_wlan0
   port-guest_wlan1
