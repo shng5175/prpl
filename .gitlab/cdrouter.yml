@@ -87,6 +87,7 @@
         ssh root@$TARGET_LAN_IP ps > processes-$LABGRID_TARGET.txt
         ssh root@$TARGET_LAN_IP dmesg > dmesg-$LABGRID_TARGET.txt
         ssh root@$TARGET_LAN_IP logread >> logread-$LABGRID_TARGET.txt
+        ssh root@$TARGET_LAN_IP opkg list > opkg_list-$LABGRID_TARGET.txt
         ssh root@$TARGET_LAN_IP cat /etc/config/network > uci-network-$LABGRID_TARGET.txt
         ssh root@$TARGET_LAN_IP cat /etc/config/wireless > uci-wireless-$LABGRID_TARGET.txt
         ssh root@$TARGET_LAN_IP cat /etc/config/prplmesh > uci-prplmesh-$LABGRID_TARGET.txt
@@ -110,3 +111,4 @@
       - uci-*-$LABGRID_TARGET.txt
       - system-$LABGRID_TARGET.json
       - console_$LABGRID_TARGET.txt
+      - opkg_list-$LABGRID_TARGET.txt
