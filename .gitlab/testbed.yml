@@ -34,7 +34,14 @@
     - ssh-keyscan $TESTBED_UART_RELAY_HOST > ~/.ssh/known_hosts 2> /dev/null
     - chmod 644 ~/.ssh/known_hosts
 
-    - cp "$TFTP_IMAGE_PATH/$TFTP_IMAGE_FILENAME" "$TESTBED_TFTP_PATH"
+    - >
+      if [ -n "$TFTP_IMAGE_DOWNLOAD_URL" ]; then
+        echo "Downloading firmware image from $TFTP_IMAGE_DOWNLOAD_URL"
+        curl "$TFTP_IMAGE_DOWNLOAD_URL" > "$TESTBED_TFTP_PATH/$TFTP_IMAGE_FILENAME"
+      else
+        echo "Using firmware image $TFTP_IMAGE_PATH/$TFTP_IMAGE_FILENAME"
+        cp "$TFTP_IMAGE_PATH/$TFTP_IMAGE_FILENAME" "$TESTBED_TFTP_PATH"
+      fi
     - .gitlab/scripts/testbed-device.py --target $LABGRID_TARGET boot_into shell
     - >
       .gitlab/scripts/testbed-device.py
