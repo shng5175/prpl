@@ -11,7 +11,7 @@ feeds:
   - name: feed_intel
     uri: https://gitlab.com/prpl-foundation/prplOS/feed-intel.git
     tracking_branch: ugw-8.5.2-cleanup
-    revision: 7f6c9181724b3d0b322f396b71d02a34622a431b
+    revision: dea50c0f5e37583d051e7e5bc83e7b53f06bf655
 
 packages:
   - dwpal_6x-uci
