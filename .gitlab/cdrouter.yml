@@ -7,6 +7,7 @@
     - when: always
   variables:
     TEST_CONFIG: generic
+    DUT_SLEEP_AFTER_BOOT: 20
     CDROUTER_LAN_INTERFACE: eth1
     CDROUTER_WAN_INTERFACE: eth2
     CDROUTER_ETH0_MAC_ADDRESS: 00:03:2d:49:2e:d8
@@ -60,6 +61,7 @@
     - sudo ip link set $TESTBED_LAN_INTERFACE down 2> /dev/null
 
   script:
+    - sleep $DUT_SLEEP_AFTER_BOOT
 
     - export TEST_PACKAGE="$(echo $CI_JOB_NAME | sed 's/CDRouter \(.*\) package on .*/\1/')"
     - .gitlab/scripts/testbed-cdrouter.py config_import $TEST_CONFIG
