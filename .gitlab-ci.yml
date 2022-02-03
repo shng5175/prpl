@@ -9,8 +9,5 @@ include:
 stages:
   - run
 
-build test mvebu prpl webui:
-  extends: .build test config
-
 run test Gl.iNet B1300 with system on initramfs:
   extends: .glinet-b1300 testbed
