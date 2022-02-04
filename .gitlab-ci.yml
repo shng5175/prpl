@@ -48,7 +48,7 @@ run test Turris Omnia with system on initramfs:
     - build test mvebu prpl webui
   extends: .turris-omnia testbed
 
-CDRouter simple-arp-tests package on NEC WX3000HP with system on NAND:
+CDRouter CDRouter-Top-100 package on NEC WX3000HP with system on NAND:
   dependencies:
     - build test intel_mips prpl webui
   extends:
@@ -57,14 +57,14 @@ CDRouter simple-arp-tests package on NEC WX3000HP with system on NAND:
   variables:
     LABGRID_TARGET: "$DUT_BOARD-firstboot"
 
-CDRouter simple-arp-tests package on Gl.iNet B1300 with system on initramfs:
+CDRouter CDRouter-Top-100 package on Gl.iNet B1300 with system on initramfs:
   dependencies:
     - build test ipq40xx prpl webui
   extends:
     - .glinet-b1300 testbed
     - .cdrouter
 
-CDRouter simple-arp-tests package on Turris Omnia with system on initramfs:
+CDRouter CDRouter-Top-100 package on Turris Omnia with system on initramfs:
   dependencies:
     - build test mvebu prpl webui
   extends:
