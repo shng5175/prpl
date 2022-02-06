@@ -4,7 +4,7 @@ feeds:
   - name: feed_prpl
     uri: https://gitlab.com/prpl-foundation/prplOS/feed-prpl.git
     tracking_branch: prplwrt-19.07
-    revision: prplos-v1.3
+    revision: 62eb2f35c0399e4152d5c7e8093bcc79798a13c9
 
 additional_packages:
   - feed: packages
@@ -12,12 +12,43 @@ additional_packages:
       - chrony
 
 packages:
+  - acl-manager
+  - amx-cli
+  - bbfd
+  - deviceinfo-manager
+  - dhcpv4-manager
+  - dhcpv6s-manager
+  - ethernet-manager
+  - ip-manager
+  - libdhcpoptions
+  - libfwinterface
+  - libfwrules
+  - libnetmodel
+  - mod-amxb-ubus
+  - mod-ba-cli
+  - mod-dmext
+  - mod-dmstats
+  - mod-vlan-ioctl
+  - mod-sahtrace
+  - netdev-plugin
+  - netmodel
   - obuspa
+  - odl-generator
+  - owsd
+  - pcm-manager
+  - prplmesh
+  - routing-manager
+  - time-manager
+  - tr181-bridging
+  - tr181-device
+  - tr181-dhcpv4client
+  - tr181-dhcpv6client
+  - tr181-firewall
+  - tr181-usermanagement
   - u80211d
   - ucwmp
   - umdns
-  - bbfd
-  - prplmesh
+  - wan-manager
 
 diffconfig: |
           CONFIG_PACKAGE_rpcd-mod-luci=y
