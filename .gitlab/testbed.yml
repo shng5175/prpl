@@ -16,6 +16,8 @@
     DUT_SLEEP_AFTER_BOOT: 90
     CRAM_REMOTE_COMMAND: ssh root@$TARGET_LAN_IP
     CRAM_TEST_SUITE: |
+      .gitlab/tests/cram/generic/acceleration-plan-components
+      .gitlab/tests/cram/$DUT_BOARD/acceleration-plan-components
       .gitlab/tests/cram/generic
       .gitlab/tests/cram/$DUT_BOARD
 
