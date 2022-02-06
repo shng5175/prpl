@@ -40,10 +40,73 @@
       usign
       ustream-ssl
     CI_COVERITY_PRPLOS_PACKAGE_LIST: >
+      acl-manager
+      amxb-inspect
+      amx-cli
+      amx-fcgi
+      amxo-cg
+      amxrt
       bbfd
+      deviceinfo-manager
+      dhcpv4-manager
+      dhcpv6s-manager
+      ethernet-manager
+      gmap-mibs-common
+      gmap-mod-ethernet-dev
+      gmap-mod-name-selector
+      gmap-mod-self
+      gmap-server
+      ip-manager
+      libamxa
+      libamxb
+      libamxc
+      libamxd
+      libamxj
+      libamxm
+      libamxo
+      libamxp
+      libamxs
+      libamxt
+      libdhcpoptions
+      libfwinterface
+      libfwrules
+      libgmap-client
+      libnetmodel
+      libsahtrace
+      libtrace
+      moca-manager
+      mod-amxb-ubus
+      mod-ba-cli
+      mod-dm-cli
+      mod-dmext
+      mod-dmproxy
+      mod-dmstats
+      mod-netmodel
+      mod-pcm-svc
+      mod-sahtrace
+      mod-vlan-ioctl
+      mod-vlan-uci
+      netdev-plugin
+      netmodel
+      netmodel-ip
       obuspa
+      pcm-manager
       prplmesh
+      routing-manager
+      time-manager
+      tr181-bridging
+      tr181-device
+      tr181-dhcpv4client
+      tr181-dhcpv6client
+      tr181-firewall
+      tr181-qos
+      tr181-routeradvertisement
+      tr181-usermanagement
       ucwmp
+      umdns
+      uriparser
+      wan-autosensing
+      wan-manager
 
   rules:
     - if: $CI_PIPELINE_SOURCE == "schedule"
