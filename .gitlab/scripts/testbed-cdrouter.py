@@ -31,7 +31,10 @@ class OpenWrtSystemInfo:
     @property
     def board_name(self):
         board_name = self.data["board_name"]
-        fixup = {"EASY350 ANYWAN (GRX350) Axepoint Asurada model": "nec-wx3000hp"}
+        fixup = {
+            "EASY350 ANYWAN (GRX350) Axepoint Asurada model": "nec-wx3000hp",
+            "EASY350 ANYWAN (GRX350) Main model": "nec-wx3000hp",
+        }
         board_name = fixup.get(board_name, board_name)
         return board_name.replace(",", "-")
 
