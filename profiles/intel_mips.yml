@@ -10,7 +10,7 @@ external_target: True
 description: Build images for the Intel MIPS devices - Netgear RAX40, AxePoint and Asurada
 feeds:
   - name: feed_intel
-    uri: https://gitlab.com/prpl-foundation/prplwrt/feed-intel.git
+    uri: https://gitlab.com/prpl-foundation/prplOS/feed-intel.git
     tracking_branch: prplwrt-19.07
     revision: prplos-v1.3
 
