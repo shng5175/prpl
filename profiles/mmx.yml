@@ -2,7 +2,7 @@ feeds:
   - name: mmx
     uri: https://github.com/InangoSystems/feed-mmx.git
     tracking_branch: mmx-as-luci-page
-    revision: d3609739d90adeaa868588111eb72f32f9ca1504
+    revision: 63365f3c8cfe16a2b7ac46ca6874056dcd962d23
 
 packages:
   - luasocket
