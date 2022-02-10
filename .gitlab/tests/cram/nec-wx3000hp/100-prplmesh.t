@@ -15,10 +15,6 @@ Check that hostapd & supplicant proccess are up after wireless startup:
   $ R "ps w" | sed -nE 's/.*(\/usr\/sbin\/hostapd.*)/\1/p' | LC_ALL=C sort
   /usr/sbin/hostapd -s -g /var/run/hostapd/global-hostapd -P /var/run/wifi-global-hostapd.pid -B /var/run/h
 
-  $ R "ps w" | sed -nE 's/.*(\/usr\/sbin\/wpa_supplicant.*)/\1/p' | LC_ALL=C sort
-  /usr/sbin/wpa_supplicant -B -P /var/run/wpa_supplicant-wlan1.pid -D nl80211 -i wlan1 -c /var/run/wpa_supp
-  /usr/sbin/wpa_supplicant -B -P /var/run/wpa_supplicant-wlan3.pid -D nl80211 -i wlan3 -c /var/run/wpa_supp
-
 Restart prplmesh:
 
   $ R logger -t cram "Restart prplmesh"
@@ -30,17 +26,11 @@ Check VAP setup:
 
   $ R "iwinfo | grep ESSID"
   wlan0     ESSID: "dummy_ssid_0"
-  wlan0.0   ESSID: "prplMesh"
-  wlan0.1   ESSID: "wave_11"
-  wlan0.2   ESSID: "wave_12"
-  wlan0.3   ESSID: "wave_13"
-  wlan1     ESSID: unknown
+  wlan0.0   ESSID: "prplOS"
+  wlan0.1   ESSID: "prplOS-guest"
   wlan2     ESSID: "dummy_ssid_2"
-  wlan2.0   ESSID: "prplMesh"
-  wlan2.1   ESSID: "wave_43"
-  wlan2.2   ESSID: "wave_44"
-  wlan2.3   ESSID: "wave_45"
-  wlan3     ESSID: unknown
+  wlan2.0   ESSID: "prplOS"
+  wlan2.1   ESSID: "prplOS-guest"
 
 Check that prplmesh processes are running:
 
@@ -81,10 +71,6 @@ Check that prplmesh is in operational state:
   wlan0
   wlan0.0
   wlan0.1
-  wlan0.2
-  wlan0.3
   wlan2
   wlan2.0
   wlan2.1
-  wlan2.2
-  wlan2.3
