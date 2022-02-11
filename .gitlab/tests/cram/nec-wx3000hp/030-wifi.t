@@ -4,5 +4,5 @@ Create R alias:
 
 Check for correct SSID setup:
 
-  $ R "iwinfo | grep ESSID"
+  $ R "iwinfo" | awk '/wlan[0-9.]+/{printf("%s %s ",$1,$3)};/Point:/{print $3}' | grep -v 00:00:00:00:00:00
   [1]
