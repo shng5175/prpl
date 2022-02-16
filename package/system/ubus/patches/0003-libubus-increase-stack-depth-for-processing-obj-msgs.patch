@@ -1,0 +1,28 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Felix Fietkau <nbd@nbd.name>
+Date: Mon, 9 Aug 2021 12:56:54 +0200
+Subject: [PATCH] libubus: increase stack depth for processing obj msgs
+
+Avoid running into an issue where issuing a request from an obj message
+can lead to recursive message processing and list corruption
+
+Signed-off-by: Felix Fietkau <nbd@nbd.name>
+(cherry picked from commit a72457b61df045d3c499a6211362b751710590d7)
+---
+ libubus.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/libubus.c b/libubus.c
+index 7ce454eabc64..aee2a3b722a7 100644
+--- a/libubus.c
++++ b/libubus.c
+@@ -103,7 +103,9 @@ ubus_process_msg(struct ubus_context *ctx, struct ubus_msghdr_buf *buf, int fd)
+ 			break;
+ 		}
+ 
++		ctx->stack_depth++;
+ 		ubus_process_obj_msg(ctx, buf, fd);
++		ctx->stack_depth--;
+ 		break;
+ 	case UBUS_MSG_MONITOR:
+ 		if (ctx->monitor_cb)
