@@ -55,5 +55,6 @@ diffconfig: |
           CONFIG_PACKAGE_rpcd-mod-luci=y
           CONFIG_PACKAGE_ip-full=y
           CONFIG_PACKAGE_ip-bridge=y
+          CONFIG_PACKAGE_tc=y
           # CONFIG_PACKAGE_firewall is not set
           # CONFIG_PACKAGE_logd is not set
