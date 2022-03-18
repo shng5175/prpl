@@ -4,7 +4,8 @@
   rules:
     - if: '$CI_PIPELINE_SOURCE == "schedule"'
       when: never
-    - when: always
+    - if: '$CI_COMMIT_BRANCH == $CI_DESIGNATED_BRANCH'
+    - when: manual
   variables:
     TESTBED_MNG_INTERFACE: enp1s0
     TESTBED_LAN_INTERFACE: enp2s0

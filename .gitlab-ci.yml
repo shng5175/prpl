@@ -43,23 +43,22 @@ coverity scan ipq40xx prpl webui:
       arm-openwrt-linux-muslgnueabi-gcc
 
 run test NEC WX3000HP with system on NAND:
-  dependencies:
-    - build test intel_mips prpl webui
+  needs: ["build test intel_mips prpl webui"]
   extends: .nec-wx3000hp testbed
 
 run test Gl.iNet B1300 with system on initramfs:
-  dependencies:
-    - build test ipq40xx prpl webui
+  needs: ["build test ipq40xx prpl webui"]
   extends: .glinet-b1300 testbed
 
 run test Turris Omnia with system on initramfs:
-  dependencies:
-    - build test mvebu prpl webui
+  needs: ["build test mvebu prpl webui"]
   extends: .turris-omnia testbed
 
 CDRouter CDRouter-Top-100 package on NEC WX3000HP with system on NAND:
-  dependencies:
-    - build test intel_mips prpl webui
+  needs:
+    - job: run test NEC WX3000HP with system on NAND
+      artifacts: false
+    - job: build test intel_mips prpl webui
   extends:
     - .nec-wx3000hp testbed
     - .cdrouter
@@ -67,15 +66,19 @@ CDRouter CDRouter-Top-100 package on NEC WX3000HP with system on NAND:
     LABGRID_TARGET: "$DUT_BOARD-firstboot"
 
 CDRouter CDRouter-Top-100 package on Gl.iNet B1300 with system on initramfs:
-  dependencies:
-    - build test ipq40xx prpl webui
+  needs:
+    - job: run test Gl.iNet B1300 with system on initramfs
+      artifacts: false
+    - job: build test ipq40xx prpl webui
   extends:
     - .glinet-b1300 testbed
     - .cdrouter
 
 CDRouter CDRouter-Top-100 package on Turris Omnia with system on initramfs:
-  dependencies:
-    - build test mvebu prpl webui
+  needs:
+    - job: run test Turris Omnia with system on initramfs
+      artifacts: false
+    - job: build test mvebu prpl webui
   extends:
     - .turris-omnia testbed
     - .cdrouter
