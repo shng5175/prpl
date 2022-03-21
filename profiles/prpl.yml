@@ -103,6 +103,7 @@ diffconfig: |
           CONFIG_PACKAGE_lxc4-user-nic=y
           CONFIG_PACKAGE_lxc4-usernsexec=y
           CONFIG_PACKAGE_lxc4-wait=y
+          CONFIG_PACKAGE_e2fsprogs=y
           CONFIG_SAH_SERVICES_CTHULHU_INIT_CONTAINER_BACKEND=y
           CONFIG_SAH_SERVICES_CTHULHU_CONTAINER_BACKEND="/usr/lib/cthulhu-lxc/cthulhu-lxc.so"
           CONFIG_SAH_SERVICES_TIMINGILA_INIT_ADAPTERS=y
