@@ -46,6 +46,7 @@ packages:
   - tr181-dhcpv4client
   - tr181-dhcpv6client
   - tr181-firewall
+  - tr181-qos
   - tr181-usermanagement
   - u80211d
   - ucwmp
